@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../feature/auth/presentation/provider/auth_provider.dart';
 import '../../feature/auth/presentation/screen/signin_screen.dart';
 import '../../feature/home/presentation/screen/home_screen.dart';
+import '../../feature/order/presentation/screen/order_detail_screen.dart';
 
 /*class Routes {
   static const String home = '/home';
@@ -57,6 +58,25 @@ class RouterHelper {
         GoRoute(
           path: '/',
           builder: (context, state) => HomeScreen(),
+        ),
+        GoRoute(
+          path: '/orders/:date/:id',
+          builder: (context, state) {
+            print(state.pathParameters);
+            if (state.pathParameters.isEmpty ||
+                state.pathParameters['id'] == null ||
+                state.pathParameters['date'] == null) {
+              return ScaffoldPage(
+                  content: Center(
+                child: Text('Loading...'),
+              ));
+            } else {
+              int orderId = int.parse(state.pathParameters['id']!);
+              DateTime orderDate =
+                  DateTime.parse(state.pathParameters['date']!);
+              return OrderDetailScreen(orderId: orderId, orderDate: orderDate);
+            }
+          },
         ),
         GoRoute(
           path: '/signin',

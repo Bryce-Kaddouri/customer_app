@@ -9,6 +9,12 @@ import 'package:customer_app/src/feature/auth/business/usecase/verify_otp_usecas
 import 'package:customer_app/src/feature/auth/data/datasource/auth_datasource.dart';
 import 'package:customer_app/src/feature/auth/data/repository/auth_repository_impl.dart';
 import 'package:customer_app/src/feature/auth/presentation/provider/auth_provider.dart';
+import 'package:customer_app/src/feature/order/business/repository/order_repository.dart';
+import 'package:customer_app/src/feature/order/business/usecase/order_get_order_by_id_usecase.dart';
+import 'package:customer_app/src/feature/order/business/usecase/order_get_orders_by_customer_id_usecase.dart';
+import 'package:customer_app/src/feature/order/data/datasource/order_datasource.dart';
+import 'package:customer_app/src/feature/order/data/repository/order_repository_impl.dart';
+import 'package:customer_app/src/feature/order/presentation/provider/order_provider.dart';
 import 'package:customer_app/src/feature/provider/theme_provider.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +40,8 @@ Future<void> main() async {
   final supabaseClient = Supabase.instance;
   AuthRepository authRepository =
       AuthRepositoryImpl(dataSource: AuthDataSource());
+  OrderRepository orderRepository =
+      OrderRepositoryImpl(orderDataSource: OrderDataSource());
 
   // set path strategy
   usePathUrlStrategy();
@@ -59,6 +67,14 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider<ThemeProvider>(
           create: (context) => ThemeProvider(),
+        ),
+        ChangeNotifierProvider<OrderProvider>(
+          create: (context) => OrderProvider(
+              orderGetOrdersByCustomerIdUseCase:
+                  OrderGetOrdersByCustomerIdUseCase(
+                      orderRepository: orderRepository),
+              orderGetOrdersByIdUseCase:
+                  OrderGetOrdersByIdUseCase(orderRepository: orderRepository)),
         ),
       ],
       child: MyApp(),
