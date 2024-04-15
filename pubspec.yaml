@@ -44,6 +44,9 @@ dependencies:
   flutter_secure_storage: ^9.0.0
   phone_form_field: ^9.2.3
   pinput: ^4.0.0
+  firebase_core: ^2.29.0
+  firebase_messaging: ^14.8.1
+  flutter_local_notifications: ^17.0.1
 
 dev_dependencies:
   flutter_test:

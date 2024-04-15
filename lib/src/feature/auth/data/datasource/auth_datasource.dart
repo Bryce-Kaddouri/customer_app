@@ -30,6 +30,7 @@ class AuthDataSource {
         token: params.token,
         phone: params.phone,
       );
+
       return Right(true);
     } on AuthException catch (e) {
       print(e.message);
@@ -61,6 +62,23 @@ class AuthDataSource {
   // method to get user
   User? getUser(NoParams param) {
     return _auth.currentUser;
+  }
+
+  // method to updat raw user data
+  Future<Either<AuthFailure, bool>> updateUserData(
+      Map<String, dynamic> data) async {
+    try {
+      await _auth.updateUser(UserAttributes(
+        data: data,
+      ));
+      return Right(true);
+    } on AuthException catch (e) {
+      print(e.message);
+      return Left(AuthFailure(errorMessage: e.message));
+    } catch (e) {
+      print(e);
+      return Left(AuthFailure(errorMessage: 'Error updating user data'));
+    }
   }
 
   Stream<AuthState> onAuthStateChange() {

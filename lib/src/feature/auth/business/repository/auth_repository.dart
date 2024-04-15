@@ -17,6 +17,7 @@ abstract class AuthRepository {
   User? getUser(NoParams param);
 
   Stream<AuthState> onAuthStateChange(NoParams param);
+  Future<Either<AuthFailure, bool>> updateUserData(Map<String, dynamic> data);
 
 /*bool isLoggedIn();
   String getUserToken();*/

@@ -43,4 +43,10 @@ class AuthRepositoryImpl implements AuthRepository {
   Stream<AuthState> onAuthStateChange(NoParams param) {
     return dataSource.onAuthStateChange();
   }
+
+  @override
+  Future<Either<AuthFailure, bool>> updateUserData(
+      Map<String, dynamic> data) async {
+    return await dataSource.updateUserData(data);
+  }
 }

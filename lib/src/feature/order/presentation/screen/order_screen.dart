@@ -1,6 +1,9 @@
+import 'package:customer_app/src/feature/auth/presentation/provider/auth_provider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/helper/date_helper.dart';
 import '../../data/model/order_model.dart';
@@ -21,9 +24,28 @@ class _OrderScreenState extends State<OrderScreen>
   ScrollController _testController = ScrollController();
   List<DateTime> lstWeedDays = [];
 
+  void getToken() async {
+    String? firebaseToken = await FirebaseMessaging.instance.getToken(
+        vapidKey:
+            'BIfSAPxXNxdo1Op2i2QY9XY4orb7QclmiGD5fOmKfwB9UbS1MDZXjT1KInp0xuqyu5VK8AtIhWk0A8_yB9s0lyQ');
+    print('get token');
+    User? currentUser = context.read<AuthProvider>().getUser();
+    String? currentFcmToken = currentUser?.userMetadata?['fcm_token'];
+
+    if (firebaseToken != null && currentFcmToken != firebaseToken) {
+      bool res = await context
+          .read<AuthProvider>()
+          .updateUserData({'fcm_token': firebaseToken});
+    }
+    print('res');
+  }
+
   @override
   void initState() {
     super.initState();
+
+    getToken();
+
     setState(() {
       lstWeedDays =
           DateHelper.getDaysInWeek(context.read<OrderProvider>().selectedDate);

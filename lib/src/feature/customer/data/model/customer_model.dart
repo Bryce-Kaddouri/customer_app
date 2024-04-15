@@ -10,30 +10,35 @@ class CustomerModel {
   final String countryCode;
   final bool isEnable;
   final IsoCode? isoCode;
+  final String? fcmToken;
 
-  CustomerModel(
-      {required this.id,
-      required this.fName,
-      required this.lName,
-      this.createdAt,
-      this.updatedAt,
-      required this.phoneNumber,
-      required this.countryCode,
-      required this.isEnable,
-      this.isoCode});
+  CustomerModel({
+    required this.id,
+    required this.fName,
+    required this.lName,
+    this.createdAt,
+    this.updatedAt,
+    required this.phoneNumber,
+    required this.countryCode,
+    required this.isEnable,
+    this.isoCode,
+    this.fcmToken,
+  });
 
   factory CustomerModel.fromJson(Map<String, dynamic> json,
       {bool isFromTable = true}) {
     try {
       if (isFromTable) {
         return CustomerModel(
-            id: json['id'],
-            fName: json['f_name'],
-            lName: json['l_name'],
-            phoneNumber: json['phone_number'],
-            countryCode: json['country_code'],
-            isEnable: json['is_enable'],
-            isoCode: IsoCode.fromJson(json['iso_code']));
+          id: json['id'],
+          fName: json['f_name'],
+          lName: json['l_name'],
+          phoneNumber: json['phone_number'],
+          countryCode: json['country_code'],
+          isEnable: json['is_enable'],
+          isoCode: IsoCode.fromJson(json['iso_code']),
+          fcmToken: json['fcm_token'],
+        );
       } else {
         return CustomerModel(
           id: json['customer_id'],

@@ -9,6 +9,7 @@ import '../../business/usecase/auth_is_looged_in_usecase.dart';
 import '../../business/usecase/auth_logout_usecase.dart';
 import '../../business/usecase/auth_on_auth_change_usecase.dart';
 import '../../business/usecase/send_otp_usecase.dart';
+import '../../business/usecase/update_user_data.dart';
 import '../../business/usecase/verify_otp_usecase.dart';
 import '../../data/user_model.dart';
 
@@ -19,6 +20,7 @@ class AuthProvider with ChangeNotifier {
   final AuthIsLoggedInUseCase authIsLoggedInUseCase;
   final AuthOnAuthOnAuthChangeUseCase authOnAuthChangeUseCase;
   final AuthVerifyOtpUseCase authVerifyOtpUseCase;
+  final AuthUpdateUserDataUseCase authUpdateUserDataUseCase;
 
   AuthProvider({
     required this.authSendOtpUseCase,
@@ -27,6 +29,7 @@ class AuthProvider with ChangeNotifier {
     required this.authIsLoggedInUseCase,
     required this.authOnAuthChangeUseCase,
     required this.authVerifyOtpUseCase,
+    required this.authUpdateUserDataUseCase,
   });
 
   bool checkIsLoggedIn() {
@@ -108,5 +111,20 @@ class AuthProvider with ChangeNotifier {
 
   Stream<AuthState> onAuthStateChange() {
     return authOnAuthChangeUseCase.call(NoParams());
+  }
+
+  Future<bool> updateUserData(Map<String, dynamic> data) async {
+    bool isSuccess = false;
+    final result = await authUpdateUserDataUseCase.call(data);
+
+    await result.fold((l) async {
+      print('error updating user data');
+      print(l.errorMessage);
+      isSuccess = false;
+    }, (r) async {
+      isSuccess = true;
+    });
+
+    return isSuccess;
   }
 }
