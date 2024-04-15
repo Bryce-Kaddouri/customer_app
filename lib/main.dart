@@ -1,4 +1,5 @@
 import 'package:customer_app/src/core/constant/route.dart';
+import 'package:customer_app/src/core/helper/notification_helper.dart';
 import 'package:customer_app/src/feature/auth/business/repository/auth_repository.dart';
 import 'package:customer_app/src/feature/auth/business/usecase/auth_get_user_usecase.dart';
 import 'package:customer_app/src/feature/auth/business/usecase/auth_is_looged_in_usecase.dart';
@@ -10,6 +11,11 @@ import 'package:customer_app/src/feature/auth/business/usecase/verify_otp_usecas
 import 'package:customer_app/src/feature/auth/data/datasource/auth_datasource.dart';
 import 'package:customer_app/src/feature/auth/data/repository/auth_repository_impl.dart';
 import 'package:customer_app/src/feature/auth/presentation/provider/auth_provider.dart';
+import 'package:customer_app/src/feature/notification/business/repository/notification_repository.dart';
+import 'package:customer_app/src/feature/notification/business/usecase/notification_get_notifications_usecase.dart';
+import 'package:customer_app/src/feature/notification/data/datasource/notification_datasource.dart';
+import 'package:customer_app/src/feature/notification/data/repository/notification_repository_impl.dart';
+import 'package:customer_app/src/feature/notification/presentation/provider/notification_provider.dart';
 import 'package:customer_app/src/feature/order/business/repository/order_repository.dart';
 import 'package:customer_app/src/feature/order/business/usecase/order_get_order_by_id_usecase.dart';
 import 'package:customer_app/src/feature/order/business/usecase/order_get_orders_by_customer_id_usecase.dart';
@@ -24,7 +30,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:go_router/go_router.dart';
 /*
 import 'package:paged_datatable/l10n/generated/l10n.dart';
@@ -56,8 +61,7 @@ Future<void> setupFlutterNotifications() async {
   channel = const AndroidNotificationChannel(
     'high_importance_channel', // id
     'High Importance Notifications', // title
-    description:
-        'This channel is used for important notifications.', // description
+    description: 'This channel is used for important notifications.', // description
     importance: Importance.high,
   );
 
@@ -67,10 +71,7 @@ Future<void> setupFlutterNotifications() async {
   ///
   /// We use this channel in the `AndroidManifest.xml` file to override the
   /// default FCM channel to enable heads up notifications.
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
+  await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
 
   /// Update the iOS foreground notification presentation options to allow
   /// heads up notifications.
@@ -83,6 +84,8 @@ Future<void> setupFlutterNotifications() async {
 }
 
 void showFlutterNotification(RemoteMessage message) {
+  print('Handling a background message ${message.messageId}');
+
   RemoteNotification? notification = message.notification;
   AndroidNotification? android = message.notification?.android;
   if (notification != null && android != null && !kIsWeb) {
@@ -113,60 +116,53 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  MessagingService().setupFlutterNotifications();
 
   if (!kIsWeb) {
     await setupFlutterNotifications();
   }
   await Supabase.initialize(
     url: 'https://qlhzemdpzbonyqdecfxn.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFsaHplbWRwemJvbnlxZGVjZnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDQ4ODY4MDYsImV4cCI6MjAyMDQ2MjgwNn0.lcUJMI3dvMDT7LaO7MiudIkdxAZOZwF_hNtkQtF3OC8',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFsaHplbWRwemJvbnlxZGVjZnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDQ4ODY4MDYsImV4cCI6MjAyMDQ2MjgwNn0.lcUJMI3dvMDT7LaO7MiudIkdxAZOZwF_hNtkQtF3OC8',
   );
 
-  final supabaseAdmin = SupabaseClient(
-      'https://qlhzemdpzbonyqdecfxn.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFsaHplbWRwemJvbnlxZGVjZnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDQ4ODY4MDYsImV4cCI6MjAyMDQ2MjgwNn0.lcUJMI3dvMDT7LaO7MiudIkdxAZOZwF_hNtkQtF3OC8');
+  final supabaseAdmin = SupabaseClient('https://qlhzemdpzbonyqdecfxn.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFsaHplbWRwemJvbnlxZGVjZnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDQ4ODY4MDYsImV4cCI6MjAyMDQ2MjgwNn0.lcUJMI3dvMDT7LaO7MiudIkdxAZOZwF_hNtkQtF3OC8');
   final supabaseClient = Supabase.instance;
-  AuthRepository authRepository =
-      AuthRepositoryImpl(dataSource: AuthDataSource());
-  OrderRepository orderRepository =
-      OrderRepositoryImpl(orderDataSource: OrderDataSource());
+  AuthRepository authRepository = AuthRepositoryImpl(dataSource: AuthDataSource());
+  OrderRepository orderRepository = OrderRepositoryImpl(orderDataSource: OrderDataSource());
+  NotificationRepository notificationRepository = NotificationRepositoryImpl(dataSource: NotificationDataSource());
+
+  MessagingService().requestPermission();
 
   // set path strategy
+/*
   usePathUrlStrategy();
+*/
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthProvider>(
           create: (context) => AuthProvider(
-            authSendOtpUseCase:
-                AuthSendOtpUseCase(authRepository: authRepository),
-            authLogoutUseCase:
-                AuthLogoutUseCase(authRepository: authRepository),
-            authGetUserUseCase:
-                AuthGetUserUseCase(authRepository: authRepository),
-            authIsLoggedInUseCase:
-                AuthIsLoggedInUseCase(authRepository: authRepository),
-            authOnAuthChangeUseCase:
-                AuthOnAuthOnAuthChangeUseCase(authRepository: authRepository),
-            authVerifyOtpUseCase:
-                AuthVerifyOtpUseCase(authRepository: authRepository),
-            authUpdateUserDataUseCase:
-                AuthUpdateUserDataUseCase(authRepository: authRepository),
+            authSendOtpUseCase: AuthSendOtpUseCase(authRepository: authRepository),
+            authLogoutUseCase: AuthLogoutUseCase(authRepository: authRepository),
+            authGetUserUseCase: AuthGetUserUseCase(authRepository: authRepository),
+            authIsLoggedInUseCase: AuthIsLoggedInUseCase(authRepository: authRepository),
+            authOnAuthChangeUseCase: AuthOnAuthOnAuthChangeUseCase(authRepository: authRepository),
+            authVerifyOtpUseCase: AuthVerifyOtpUseCase(authRepository: authRepository),
+            authUpdateUserDataUseCase: AuthUpdateUserDataUseCase(authRepository: authRepository),
           ),
         ),
         ChangeNotifierProvider<ThemeProvider>(
           create: (context) => ThemeProvider(),
         ),
         ChangeNotifierProvider<OrderProvider>(
-          create: (context) => OrderProvider(
-              orderGetOrdersByCustomerIdUseCase:
-                  OrderGetOrdersByCustomerIdUseCase(
-                      orderRepository: orderRepository),
-              orderGetOrdersByIdUseCase:
-                  OrderGetOrdersByIdUseCase(orderRepository: orderRepository)),
+          create: (context) => OrderProvider(orderGetOrdersByCustomerIdUseCase: OrderGetOrdersByCustomerIdUseCase(orderRepository: orderRepository), orderGetOrdersByIdUseCase: OrderGetOrdersByIdUseCase(orderRepository: orderRepository)),
+        ),
+        ChangeNotifierProvider<NotificationProvider>(
+          create: (context) => NotificationProvider(
+            notificationGetNotificationsUseCase: NotificationGetNotificationsUseCase(notificationRepository: notificationRepository),
+          ),
         ),
       ],
       child: MyApp(),
@@ -185,8 +181,7 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   GoRouter? router;
 
-  GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
-      GlobalKey<ScaffoldMessengerState>();
+  GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
   String? _token;
   late Stream<String> _tokenStream;
@@ -212,13 +207,7 @@ class _MyAppState extends State<MyApp> {
         arguments: MessageArguments(message, true),
       );*/
     });
-    FirebaseMessaging.instance
-        .getToken(
-            vapidKey:
-                'BIfSAPxXNxdo1Op2i2QY9XY4orb7QclmiGD5fOmKfwB9UbS1MDZXjT1KInp0xuqyu5VK8AtIhWk0A8_yB9s0lyQ')
-        .then(setToken);
-    _tokenStream = FirebaseMessaging.instance.onTokenRefresh;
-    _tokenStream.listen(setToken);
+
     context.read<ThemeProvider>().getThemeMode();
     router = RouterHelper().getRouter(context);
 

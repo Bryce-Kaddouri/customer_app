@@ -7,21 +7,13 @@ import '../model/customer_model.dart';
 
 class CustomerDataSource {
   final _client = Supabase.instance.client;
-  SupabaseClient _supaAdminClient = SupabaseClient(
-      'https://qlhzemdpzbonyqdecfxn.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFsaHplbWRwemJvbnlxZGVjZnhuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwNDg4NjgwNiwiZXhwIjoyMDIwNDYyODA2fQ.iGkTZL6qeM5f6kXobuo2b6CUdHigONycJuofyjWtEpU');
+  SupabaseClient _supaAdminClient = SupabaseClient('https://qlhzemdpzbonyqdecfxn.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFsaHplbWRwemJvbnlxZGVjZnhuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwNDg4NjgwNiwiZXhwIjoyMDIwNDYyODA2fQ.iGkTZL6qeM5f6kXobuo2b6CUdHigONycJuofyjWtEpU');
 
-  Future<Either<DatabaseFailure, bool>> addCustomer(
-      CustomerAddParam params) async {
+  Future<Either<DatabaseFailure, bool>> addCustomer(CustomerAddParam params) async {
     try {
-      Map<String, dynamic> response = await _client
-          .from('customers')
-          .insert(params.toJson())
-          .select()
-          .single();
+      Map<String, dynamic> response = await _client.from('customers').insert(params.toJson()).select().single();
 
-      UserResponse res =
-          await _supaAdminClient.auth.admin.createUser(AdminUserAttributes(
+      UserResponse res = await _supaAdminClient.auth.admin.createUser(AdminUserAttributes(
         phone: '+${params.countryCode}${params.phoneNumber}',
         userMetadata: {
           'fName': params.fName,
@@ -48,13 +40,11 @@ class CustomerDataSource {
 
   Future<Either<DatabaseFailure, List<CustomerModel>>> getCustomers() async {
     try {
-      List<Map<String, dynamic>> response =
-          await _client.from('customers').select().order('id', ascending: true);
+      List<Map<String, dynamic>> response = await _client.from('customers').select().order('id', ascending: true);
       if (response.isNotEmpty) {
         print('response is not empty customers');
         print(response);
-        List<CustomerModel> customerList =
-            response.map((e) => CustomerModel.fromJson(e)).toList();
+        List<CustomerModel> customerList = response.map((e) => CustomerModel.fromJson(e)).toList();
         print(customerList);
         return Right(customerList);
       } else {
@@ -71,12 +61,7 @@ class CustomerDataSource {
     print('get customer by id');
     print(id.runtimeType);
     try {
-      Map<String, dynamic> response = await _client
-          .from('customers')
-          .select()
-          .eq('id', id)
-          .single()
-          .order('id', ascending: true);
+      Map<String, dynamic> response = await _client.from('customers').select().eq('id', id).single().order('id', ascending: true);
       print('response get customer by id');
       if (response != null) {
         CustomerModel customerModel = CustomerModel.fromJson(response);
@@ -92,19 +77,13 @@ class CustomerDataSource {
     }
   }
 
-  Future<Either<DatabaseFailure, bool>> updateCustomer(
-      CustomerModel customerModel) async {
+  Future<Either<DatabaseFailure, bool>> updateCustomer(CustomerModel customerModel) async {
     try {
       print('categoryModel from update datasource');
       print(customerModel.toJson());
       Map<String, dynamic> customerMap = customerModel.toJson();
       customerMap['updated_at'] = DateTime.now().toIso8601String();
-      Map<String, dynamic> response = await _client
-          .from('customers')
-          .update(customerMap)
-          .eq('id', customerModel.id)
-          .select()
-          .single();
+      Map<String, dynamic> response = await _client.from('customers').update(customerMap).eq('id', customerModel.id).select().single();
       print('response update');
       print(response);
       return Right(true);
@@ -122,13 +101,7 @@ class CustomerDataSource {
   // method to delete category
   Future<Either<DatabaseFailure, bool>> deleteCustomer(int id) async {
     try {
-      List<Map<String, dynamic>> response = await _client
-          .from('customers')
-          .delete()
-          .eq('id', id)
-          .limit(1)
-          .order('id', ascending: true)
-          .select();
+      List<Map<String, dynamic>> response = await _client.from('customers').delete().eq('id', id).limit(1).order('id', ascending: true).select();
       if (response.isNotEmpty) {
         return const Right(true);
       } else {

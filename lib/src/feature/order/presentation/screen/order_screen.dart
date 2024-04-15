@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/helper/date_helper.dart';
+import '../../../../core/helper/notification_helper.dart';
 import '../../data/model/order_model.dart';
 import '../provider/order_provider.dart';
 import '../widget/order_item_view_by_status_widget.dart';
@@ -18,24 +19,23 @@ class OrderScreen extends StatefulWidget {
 }
 
 // keep alive mixin
-class _OrderScreenState extends State<OrderScreen>
-    with AutomaticKeepAliveClientMixin {
+class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClientMixin {
   ScrollController _mainScrollController = ScrollController();
   ScrollController _testController = ScrollController();
   List<DateTime> lstWeedDays = [];
 
   void getToken() async {
-    String? firebaseToken = await FirebaseMessaging.instance.getToken(
-        vapidKey:
-            'BIfSAPxXNxdo1Op2i2QY9XY4orb7QclmiGD5fOmKfwB9UbS1MDZXjT1KInp0xuqyu5VK8AtIhWk0A8_yB9s0lyQ');
-    print('get token');
+    String? firebaseToken = await FirebaseMessaging.instance.getToken(vapidKey: 'BIfSAPxXNxdo1Op2i2QY9XY4orb7QclmiGD5fOmKfwB9UbS1MDZXjT1KInp0xuqyu5VK8AtIhWk0A8_yB9s0lyQ');
+    print('firebase token');
+    print(firebaseToken);
     User? currentUser = context.read<AuthProvider>().getUser();
     String? currentFcmToken = currentUser?.userMetadata?['fcm_token'];
 
+    print('current fcm token');
+    print(currentFcmToken);
+
     if (firebaseToken != null && currentFcmToken != firebaseToken) {
-      bool res = await context
-          .read<AuthProvider>()
-          .updateUserData({'fcm_token': firebaseToken});
+      bool res = await context.read<AuthProvider>().updateUserData({'fcm_token': firebaseToken});
     }
     print('res');
   }
@@ -45,10 +45,17 @@ class _OrderScreenState extends State<OrderScreen>
     super.initState();
 
     getToken();
+    // listen to message when app is in foreground
+    MessagingService().listenMessage(
+      context,
+    );
+    // listen to message when app is in background
+    MessagingService().listenMessageBackground(
+      context,
+    );
 
     setState(() {
-      lstWeedDays =
-          DateHelper.getDaysInWeek(context.read<OrderProvider>().selectedDate);
+      lstWeedDays = DateHelper.getDaysInWeek(context.read<OrderProvider>().selectedDate);
     });
   }
 
@@ -74,9 +81,7 @@ class _OrderScreenState extends State<OrderScreen>
               ),
             ),
             content: material.Card(
-              surfaceTintColor: FluentTheme.of(context)
-                  .navigationPaneTheme
-                  .overlayBackgroundColor,
+              surfaceTintColor: FluentTheme.of(context).navigationPaneTheme.overlayBackgroundColor,
               elevation: 4,
               margin: EdgeInsets.zero,
               child: material.CalendarDatePicker(
@@ -108,7 +113,8 @@ class _OrderScreenState extends State<OrderScreen>
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(controller: _mainScrollController, slivers: [
+    return Container(
+        child: CustomScrollView(controller: _mainScrollController, slivers: [
       FutureBuilder(
         future: context.read<OrderProvider>().getOrdersByCustomerId(),
         builder: (context, snapshot) {
@@ -117,14 +123,12 @@ class _OrderScreenState extends State<OrderScreen>
               List<Map<String, dynamic>> lstDayMap = [];
 
               List<OrderModel> orderList = snapshot.data as List<OrderModel>;
-              List<DateTime> lstDayDistinct =
-                  orderList.map((e) => e.date).toSet().toList();
+              List<DateTime> lstDayDistinct = orderList.map((e) => e.date).toSet().toList();
               print('order list length');
               print(orderList.length);
 
               for (var date in lstDayDistinct) {
-                List<OrderModel> orderListOfTheDay =
-                    orderList.where((element) => element.date == date).toList();
+                List<OrderModel> orderListOfTheDay = orderList.where((element) => element.date == date).toList();
 
                 Map<String, dynamic> map = {
                   'date': date,
@@ -158,10 +162,7 @@ class _OrderScreenState extends State<OrderScreen>
                             children: [
                               Text(
                                 '${DateHelper.getFormattedDate(data['date'])}',
-                                style: FluentTheme.of(context)
-                                    .typography
-                                    .subtitle!
-                                    .copyWith(
+                                style: FluentTheme.of(context).typography.subtitle!.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
@@ -170,19 +171,13 @@ class _OrderScreenState extends State<OrderScreen>
                                 children: [
                                   TextSpan(
                                     text: '${data['order'].length}',
-                                    style: FluentTheme.of(context)
-                                        .typography
-                                        .subtitle!
-                                        .copyWith(
+                                    style: FluentTheme.of(context).typography.subtitle!.copyWith(
                                           fontWeight: FontWeight.bold,
                                         ),
                                   ),
                                   TextSpan(
                                     text: ' orders',
-                                    style: FluentTheme.of(context)
-                                        .typography
-                                        .subtitle!
-                                        .copyWith(
+                                    style: FluentTheme.of(context).typography.subtitle!.copyWith(
                                           fontWeight: FontWeight.normal,
                                         ),
                                   ),
@@ -225,8 +220,8 @@ class _OrderScreenState extends State<OrderScreen>
             );
           }
         },
-      )
-    ]);
+      ),
+    ]));
   }
 
   @override
@@ -263,6 +258,5 @@ class HorizontalSliverList extends StatelessWidget {
     );
   }
 
-  Widget addDivider() =>
-      divider ?? Padding(padding: const EdgeInsets.symmetric(horizontal: 8));
+  Widget addDivider() => divider ?? Padding(padding: const EdgeInsets.symmetric(horizontal: 8));
 }
