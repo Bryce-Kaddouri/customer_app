@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import 'notification_helper_v2.dart';
+
 String? selectedNotificationPayload;
 
 /// A notification action which triggers a url launch event
@@ -20,6 +22,7 @@ const String darwinNotificationCategoryText = 'textCategory';
 const String darwinNotificationCategoryPlain = 'plainCategory';
 
 class MessagingService {
+  int id = 0;
   bool isFlutterLocalNotificationsInitialized = false;
 
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
@@ -142,7 +145,7 @@ class MessagingService {
       macOS: macOSNotificationDetails,
       linux: linuxNotificationDetails,
     );
-    await flutterLocalNotificationsPlugin.show(0, 'plain title', 'plain body', notificationDetails, payload: 'item z');
+    await flutterLocalNotificationsPlugin.show(id++, 'plain title', 'plain body', notificationDetails, payload: 'item z');
   }
 
   void showFlutterNotification(RemoteMessage message, BuildContext context) {
@@ -209,7 +212,14 @@ class MessagingService {
 
       if (message.notification != null) {
         print('Message also contained a notification: ${message.notification!.toMap()}');
-
+        if (message.data['order_id'] != null) {
+          NotificationHelperV2(context: context).showNotificationWithActions(message.notification!.title!, message.notification!.body!, message.data, null);
+        } else {
+          String img = message.notification!.android!.imageUrl!;
+          print('img');
+          print(img);
+          NotificationHelperV2(context: context).showNotificationWithActions(message.notification!.title!, message.notification!.body!, message.data, img);
+        }
 /*
         await HomePage.showBigPictureNotification();
 */
@@ -223,6 +233,7 @@ class MessagingService {
       print('A new onMessageOpenedApp event was published!');
       print('Message data: ${message.data}');
       if (message.data['orderId'] != null) {
+        NotificationHelperV2(context: context).showNotificationWithActions(message.notification!.title!, message.notification!.body!, message.data, null);
         /* FirestoreService().getOrderDetailsByOrderId(message.data['orderId']).then((value) {
           Navigator.push(
             context,
@@ -234,6 +245,11 @@ class MessagingService {
             ),
           );
         });*/
+      } else {
+        String img = message.notification!.android!.imageUrl!;
+        print('img');
+        print(img);
+        NotificationHelperV2(context: context).showNotificationWithActions(message.notification!.title!, message.notification!.body!, message.data, img);
       }
     });
   }

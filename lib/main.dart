@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:customer_app/src/core/constant/route.dart';
+import 'package:customer_app/src/core/helper/notification_helper.dart';
 import 'package:customer_app/src/feature/auth/business/repository/auth_repository.dart';
 import 'package:customer_app/src/feature/auth/business/usecase/auth_get_user_usecase.dart';
 import 'package:customer_app/src/feature/auth/business/usecase/auth_is_looged_in_usecase.dart';
@@ -527,6 +528,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     router = RouterHelper().getRouter(context);
+    MessagingService().listenMessage(context);
+    MessagingService().listenMessageBackground(context);
   }
 
   @override
