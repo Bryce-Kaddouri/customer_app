@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../main.dart';
 import '../../feature/auth/presentation/provider/auth_provider.dart';
 import '../../feature/auth/presentation/screen/signin_screen.dart';
 import '../../feature/notification/presentation/screen/notification_list_screen.dart';
@@ -68,6 +69,14 @@ class RouterHelper {
           builder: (context, state) => NotificationListScreen(),
         ),*/
 
+        GoRoute(
+          path: '/test',
+          builder: (context, state) => HomePage(null),
+        ),
+        GoRoute(
+          path: '/second/:payload',
+          builder: (context, state) => SecondPage(state.pathParameters['payload']),
+        ),
         ShellRoute(
             builder: (BuildContext context, GoRouterState state, Widget child) {
               print('state.uri.path: ${state.uri.path}');

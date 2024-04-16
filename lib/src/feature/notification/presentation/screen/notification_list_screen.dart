@@ -1,6 +1,7 @@
 import 'package:customer_app/src/core/helper/date_helper.dart';
 import 'package:customer_app/src/feature/notification/presentation/provider/notification_provider.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/model/notification_model.dart';
@@ -77,6 +78,12 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
               )
             : Column(
                 children: [
+                  Button(
+                    onPressed: () async {
+                      context.go('/test');
+                    },
+                    child: Text('Refresh'),
+                  ),
                   for (NotificationByDate notificationByDate in notificationByDateList!) ...[
                     Container(
                       alignment: Alignment.centerLeft,

@@ -1,10 +1,13 @@
+/*
+import 'package:add_2_calendar/add_2_calendar.dart';
+*/
+import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/helper/date_helper.dart';
-import '../../../../core/helper/price_helper.dart';
 import '../../data/model/order_model.dart';
 import '../provider/order_provider.dart';
 import '../widget/order_item_view_by_status_widget.dart';
@@ -13,14 +16,12 @@ class OrderDetailScreen extends StatelessWidget {
   final int orderId;
   final DateTime orderDate;
 
-  const OrderDetailScreen(
-      {super.key, required this.orderId, required this.orderDate});
+  const OrderDetailScreen({super.key, required this.orderId, required this.orderDate});
 
   @override
   Widget build(BuildContext context) {
     return material.Scaffold(
-      backgroundColor:
-          FluentTheme.of(context).navigationPaneTheme.backgroundColor,
+      backgroundColor: FluentTheme.of(context).navigationPaneTheme.backgroundColor,
       appBar: material.AppBar(
         leading: material.BackButton(
           onPressed: () async {
@@ -29,15 +30,12 @@ class OrderDetailScreen extends StatelessWidget {
         ),
         centerTitle: true,
         shadowColor: FluentTheme.of(context).shadowColor,
-        surfaceTintColor:
-            FluentTheme.of(context).navigationPaneTheme.backgroundColor,
-        backgroundColor:
-            FluentTheme.of(context).navigationPaneTheme.backgroundColor,
+        surfaceTintColor: FluentTheme.of(context).navigationPaneTheme.backgroundColor,
+        backgroundColor: FluentTheme.of(context).navigationPaneTheme.backgroundColor,
         elevation: 4,
         title: Text('Order #${orderId}'),
         actions: [
-          if (!orderDate.isBefore(DateTime.now()
-              .copyWith(hour: 0, minute: 0, second: 0, millisecond: 0)))
+          if (!orderDate.isBefore(DateTime.now().copyWith(hour: 0, minute: 0, second: 0, millisecond: 0)))
             Button(
               style: ButtonStyle(
                 padding: ButtonState.all(EdgeInsets.zero),
@@ -58,8 +56,7 @@ class OrderDetailScreen extends StatelessWidget {
         ],
       ),
       body: FutureBuilder<OrderModel?>(
-        future:
-            context.read<OrderProvider>().getOrderDetail(orderId, orderDate),
+        future: context.read<OrderProvider>().getOrderDetail(orderId, orderDate),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -82,8 +79,7 @@ class OrderDetailScreen extends StatelessWidget {
                 children: [
                   Expanded(
                       child: ListView(
-                    padding: EdgeInsets.only(
-                        bottom: 50, left: 20, right: 20, top: 20),
+                    padding: EdgeInsets.only(bottom: 50, left: 20, right: 20, top: 20),
                     children: [
                       Row(
                         children: [
@@ -108,8 +104,7 @@ class OrderDetailScreen extends StatelessWidget {
                                   width: 10,
                                 ),
                                 Expanded(
-                                  child: Text(
-                                      '${DateHelper.getFormattedDateWithoutTime(orderModel!.date)}'),
+                                  child: Text('${DateHelper.getFormattedDateWithoutTime(orderModel!.date)}'),
                                 ),
                               ],
                             ),
@@ -135,8 +130,7 @@ class OrderDetailScreen extends StatelessWidget {
                                   width: 10,
                                 ),
                                 Expanded(
-                                  child: Text(
-                                      '${DateHelper.get24HourTime(orderModel!.time)}'),
+                                  child: Text('${DateHelper.get24HourTime(orderModel!.time)}'),
                                 ),
                               ],
                             ),
@@ -169,8 +163,7 @@ class OrderDetailScreen extends StatelessWidget {
                                   width: 10,
                                 ),
                                 Expanded(
-                                  child: Text(
-                                      '${orderModel!.customer.fName} ${orderModel!.customer.lName}'),
+                                  child: Text('${orderModel!.customer.fName} ${orderModel!.customer.lName}'),
                                 ),
                               ],
                             ),
@@ -195,8 +188,7 @@ class OrderDetailScreen extends StatelessWidget {
                                 SizedBox(
                                   width: 10,
                                 ),
-                                Text(
-                                    '${orderModel!.customer.countryCode}${orderModel!.customer.phoneNumber}'),
+                                Text('${orderModel!.customer.countryCode}${orderModel!.customer.phoneNumber}'),
                               ],
                             ),
                           ),
@@ -234,28 +226,9 @@ class OrderDetailScreen extends StatelessWidget {
                                       children: [
                                         RichText(
                                             text: TextSpan(children: [
-                                          TextSpan(
-                                              text: '${orderModel.paidAmount}',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: FluentTheme.of(context)
-                                                      .typography
-                                                      .subtitle!
-                                                      .color)),
-                                          TextSpan(
-                                              text: ' / ',
-                                              style: TextStyle(
-                                                  color: FluentTheme.of(context)
-                                                      .typography
-                                                      .subtitle!
-                                                      .color)),
-                                          TextSpan(
-                                              text: '${orderModel.totalAmount}',
-                                              style: TextStyle(
-                                                  color: FluentTheme.of(context)
-                                                      .typography
-                                                      .subtitle!
-                                                      .color)),
+                                          TextSpan(text: '${orderModel.paidAmount}', style: TextStyle(fontWeight: FontWeight.bold, color: FluentTheme.of(context).typography.subtitle!.color)),
+                                          TextSpan(text: ' / ', style: TextStyle(color: FluentTheme.of(context).typography.subtitle!.color)),
+                                          TextSpan(text: '${orderModel.totalAmount}', style: TextStyle(color: FluentTheme.of(context).typography.subtitle!.color)),
                                         ])),
                                         SizedBox(
                                           width: 10,
@@ -266,10 +239,7 @@ class OrderDetailScreen extends StatelessWidget {
                                           decoration: BoxDecoration(
                                             // rounded rectanmgle
                                             shape: BoxShape.circle,
-                                            color: orderModel.paidAmount ==
-                                                    orderModel.totalAmount
-                                                ? Colors.green
-                                                : Colors.red,
+                                            color: orderModel.paidAmount == orderModel.totalAmount ? Colors.green : Colors.red,
                                           ),
                                         ),
                                       ],
@@ -281,32 +251,11 @@ class OrderDetailScreen extends StatelessWidget {
                                           RichText(
                                               text: TextSpan(children: [
                                         TextSpan(
-                                          text:
-                                              '(${orderModel.paidAmount == orderModel.totalAmount ? 'Paid' : 'Unpaid: '}',
-                                          style: TextStyle(
-                                              color: FluentTheme.of(context)
-                                                  .typography
-                                                  .subtitle!
-                                                  .color),
+                                          text: '(${orderModel.paidAmount == orderModel.totalAmount ? 'Paid' : 'Unpaid: '}',
+                                          style: TextStyle(color: FluentTheme.of(context).typography.subtitle!.color),
                                         ),
-                                        if (orderModel.paidAmount !=
-                                            orderModel.totalAmount)
-                                          TextSpan(
-                                              text:
-                                                  '${orderModel.totalAmount - orderModel.paidAmount}',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: FluentTheme.of(context)
-                                                      .typography
-                                                      .subtitle!
-                                                      .color)),
-                                        TextSpan(
-                                            text: ' left)',
-                                            style: TextStyle(
-                                                color: FluentTheme.of(context)
-                                                    .typography
-                                                    .subtitle!
-                                                    .color)),
+                                        if (orderModel.paidAmount != orderModel.totalAmount) TextSpan(text: '${orderModel.totalAmount - orderModel.paidAmount}', style: TextStyle(fontWeight: FontWeight.bold, color: FluentTheme.of(context).typography.subtitle!.color)),
+                                        TextSpan(text: ' left)', style: TextStyle(color: FluentTheme.of(context).typography.subtitle!.color)),
                                       ])),
                                     ),
                                   ],
@@ -314,9 +263,7 @@ class OrderDetailScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          Expanded(
-                              child:
-                                  StatusWidget(status: orderModel.status.name)),
+                          Expanded(child: StatusWidget(status: orderModel.status.name)),
                         ],
                       ),
                       SizedBox(
@@ -324,16 +271,13 @@ class OrderDetailScreen extends StatelessWidget {
                       ),
                       Container(
                         alignment: Alignment.centerLeft,
-                        child: Text('Items',
-                            style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold)),
+                        child: Text('Items', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                       ),
                       SizedBox(
                         height: 16,
                       ),
                       Column(
-                        children:
-                            List.generate(orderModel.cart.length, (index) {
+                        children: List.generate(orderModel.cart.length, (index) {
                           return Card(
                               margin: EdgeInsets.symmetric(vertical: 5),
                               child: ListTile(
@@ -342,36 +286,31 @@ class OrderDetailScreen extends StatelessWidget {
                                     errorBuilder: (context, error, stackTrace) {
                                       return SizedBox();
                                     },
-                                    image: NetworkImage(orderModel!
-                                        .cart[index].product.imageUrl),
+                                    image: NetworkImage(orderModel!.cart[index].product.imageUrl),
                                     width: 50,
                                     height: 50,
                                   ),
                                 ),
-                                title: Text(
-                                    '${orderModel!.cart[index].product.name}'),
-                                subtitle: Text(
-                                    '${orderModel!.cart[index].product.price}'),
-                                trailing: Text(orderModel!.cart[index].quantity
-                                    .toString()),
+                                title: Text('${orderModel!.cart[index].product.name}'),
+                                subtitle: Text('${orderModel!.cart[index].product.price}'),
+                                trailing: Text(orderModel!.cart[index].quantity.toString()),
                               ));
                         }),
                       ),
                     ],
                   )),
-                  Container(
+                  /*Container(
                     padding: EdgeInsets.all(10),
                     child: Card(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Total Amount'),
-                          Text(PriceHelper.getFormattedPrice(
-                              orderModel.totalAmount)),
+                          Text(PriceHelper.getFormattedPrice(orderModel.totalAmount)),
                         ],
                       ),
                     ),
-                  )
+                  )*/
                 ],
               ),
             );
@@ -382,6 +321,54 @@ class OrderDetailScreen extends StatelessWidget {
           }
         },
       ),
+      persistentFooterButtons: [
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: 50,
+          child: Card(
+            padding: EdgeInsets.all(0),
+            child: FilledButton(
+              child: Text('Add To Calendar'),
+              onPressed: () async {
+                print('Add to calendar');
+                final Event event = Event(
+                  title: 'Event title',
+                  description: 'Event description',
+                  location: 'Event location',
+                  startDate: DateTime.now(),
+                  endDate: DateTime.now(),
+                  iosParams: IOSParams(
+                    reminder: Duration(/* Ex. hours:1 */), // on iOS, you can set alarm notification after your event.
+                    url: 'https://www.example.com', // on iOS, you can set url to your event.
+                  ),
+                  androidParams: AndroidParams(
+                    emailInvites: [], // on Android, you can add invite emails to your event.
+                  ),
+                );
+
+                Add2Calendar.addEvent2Cal(event);
+                /*final Event event = Event(
+                  title: 'Event title',
+                  description: 'Event description',
+                  location: 'Event location',
+                  startDate: DateTime.now(),
+                  endDate: DateTime.now(),
+                  iosParams: IOSParams(
+                    reminder: Duration(*/ /* Ex. hours:1 */ /*), // on iOS, you can set alarm notification after your event.
+                    url: 'https://www.example.com', // on iOS, you can set url to your event.
+                  ),
+                  androidParams: AndroidParams(
+                    emailInvites: [], // on Android, you can add invite emails to your event.
+                  ),
+                );
+
+                bool res = await Add2Calendar.addEvent2Cal(event);
+                print(res);*/
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

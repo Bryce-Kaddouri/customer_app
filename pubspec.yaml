@@ -51,6 +51,7 @@ dependencies:
   flutter_timezone: ^1.0.8
   device_info_plus: ^10.1.0
   image: ^4.1.7
+  add_2_calendar: ^3.0.1
 
 dev_dependencies:
   flutter_test:

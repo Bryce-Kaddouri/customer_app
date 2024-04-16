@@ -203,14 +203,16 @@ class MessagingService {
 
   // listen to message when app is in foreground
   void listenMessage(BuildContext context) {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       print('Got a message whilst in the foreground!');
       print('Message data: ${message.data}');
 
       if (message.notification != null) {
         print('Message also contained a notification: ${message.notification!.toMap()}');
 
-        showFlutterNotification(message, context);
+/*
+        await HomePage.showBigPictureNotification();
+*/
       }
     });
   }
