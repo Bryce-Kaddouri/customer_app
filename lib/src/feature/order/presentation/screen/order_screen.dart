@@ -25,7 +25,8 @@ class OrderScreen extends StatefulWidget {
 }
 
 // keep alive mixin
-class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClientMixin {
+class _OrderScreenState extends State<OrderScreen>
+    with AutomaticKeepAliveClientMixin {
   ScrollController _mainScrollController = ScrollController();
   ScrollController _testController = ScrollController();
   List<DateTime> lstWeedDays = [];
@@ -42,9 +43,11 @@ class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClient
     /// Defines a iOS/MacOS notification category for plain actions.
     const String darwinNotificationCategoryPlain = 'plainCategory';
 
-    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('app_icon');
 
-    final List<DarwinNotificationCategory> darwinNotificationCategories = <DarwinNotificationCategory>[
+    final List<DarwinNotificationCategory> darwinNotificationCategories =
+        <DarwinNotificationCategory>[
       DarwinNotificationCategory(
         darwinNotificationCategoryText,
         actions: <DarwinNotificationAction>[
@@ -90,11 +93,13 @@ class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClient
 
     /// Note: permissions aren't requested here just to demonstrate that can be
     /// done later
-    final DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings(
+    final DarwinInitializationSettings initializationSettingsDarwin =
+        DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
-      onDidReceiveLocalNotification: (int id, String? title, String? body, String? payload) async {
+      onDidReceiveLocalNotification:
+          (int id, String? title, String? body, String? payload) async {
         /* didReceiveLocalNotificationStream.add(
           ReceivedNotification(
             id: id,
@@ -106,11 +111,13 @@ class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClient
       },
       notificationCategories: darwinNotificationCategories,
     );
-    final LinuxInitializationSettings initializationSettingsLinux = LinuxInitializationSettings(
+    final LinuxInitializationSettings initializationSettingsLinux =
+        LinuxInitializationSettings(
       defaultActionName: 'Open notification',
       defaultIcon: AssetsLinuxIcon('icons/app_icon.png'),
     );
-    final InitializationSettings initializationSettings = InitializationSettings(
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsDarwin,
       macOS: initializationSettingsDarwin,
@@ -119,18 +126,25 @@ class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClient
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) {
+      onDidReceiveNotificationResponse:
+          (NotificationResponse notificationResponse) {
         print('onDidReceiveNotificationResponse');
         switch (notificationResponse.notificationResponseType) {
           case NotificationResponseType.selectedNotification:
             print(notificationResponse.payload);
             if (notificationResponse.payload != null) {
-              print('notificationResponse.payload from on tap: ${notificationResponse.payload}');
-              Map<String, dynamic> payload = jsonDecode(notificationResponse.payload!);
-              if (payload['order_date'] != null && payload['order_id'] != null) {
-                print('notificationResponse.payload id: ${payload['order_id']}');
-                print('notificationResponse.payload date: ${payload['order_date']}');
-                context.push('/orders/${payload['order_date']}/${payload['order_id']}');
+              print(
+                  'notificationResponse.payload from on tap: ${notificationResponse.payload}');
+              Map<String, dynamic> payload =
+                  jsonDecode(notificationResponse.payload!);
+              if (payload['order_date'] != null &&
+                  payload['order_id'] != null) {
+                print(
+                    'notificationResponse.payload id: ${payload['order_id']}');
+                print(
+                    'notificationResponse.payload date: ${payload['order_date']}');
+                context.push(
+                    '/orders/${payload['order_date']}/${payload['order_id']}');
               }
             }
 
@@ -141,25 +155,54 @@ class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClient
             if (notificationResponse.actionId == navigationActionId) {
               print('tap on add calendar');
 
-              print('notificationResponse.payload from on tap: ${notificationResponse.payload}');
+              print(
+                  'notificationResponse.payload from on tap: ${notificationResponse.payload}');
 
               if (notificationResponse.payload != null) {
-                print('notificationResponse.payload from on tap: ${notificationResponse.payload}');
-                Map<String, dynamic> payload = jsonDecode(notificationResponse.payload!);
-                if (payload['order_date'] != null && payload['order_id'] != null) {
-                  print('notificationResponse.payload id: ${payload['order_id']}');
-                  print('notificationResponse.payload date: ${payload['order_date']}');
+                print(
+                    'notificationResponse.payload from on tap: ${notificationResponse.payload}');
+                Map<String, dynamic> payload =
+                    jsonDecode(notificationResponse.payload!);
+                if (payload['order_date'] != null &&
+                    payload['order_id'] != null &&
+                    payload['order_hour'] != null) {
+                  print(
+                      'notificationResponse.payload id: ${payload['order_id']}');
+                  print(
+                      'notificationResponse.payload date: ${payload['order_date']}');
                   DateTime orderDate = DateTime.parse(payload['order_date']);
+                  List<String> orderHour = payload['order_hour'].split(':');
+                  material.TimeOfDay hour = material.TimeOfDay(
+                      hour: int.parse(orderHour[0]),
+                      minute: int.parse(orderHour[1]));
                   print('Add to calendar');
                   final Event event = Event(
-                    title: 'Event title',
-                    description: 'Event description',
-                    location: 'Event location',
-                    startDate: orderDate,
-                    endDate: orderDate,
+                    title: 'Customer App - Collect Order',
+                    description:
+                        'Collect Your Order at ${hour.format(context)}',
+                    location:
+                        '7 Castle View Rd, Clondalkin, Dublin 22, D22 V082, Irlande',
+                    /*  recurrence: Recurrence(
+                        frequency: Frequency.daily,
+                        ocurrences: 2,
+                        endDate: hour.hour < 8
+                            ? orderDate
+                                .copyWith(
+                                    hour: hour.hour,
+                                    minute: hour.minute,
+                                    second: 0)
+                                .subtract(Duration(hours: 2))
+                            : orderDate.copyWith(hour: 8, minute: 8, second: 8),
+                        interval: 1),*/
+
+                    startDate: orderDate.copyWith(
+                        hour: hour.hour, minute: hour.minute, second: 0),
+                    endDate: orderDate.copyWith(
+                        hour: hour.hour, minute: hour.minute, second: 0),
                     iosParams: IOSParams(
-                      reminder: Duration(/* Ex. hours:1 */), // on iOS, you can set alarm notification after your event.
-                      url: 'https://www.example.com', // on iOS, you can set url to your event.
+                      reminder: Duration(
+                          hours:
+                              1), // on iOS, you can set alarm notification after your event.
                     ),
                     androidParams: AndroidParams(
                       emailInvites: [], // on Android, you can add invite emails to your event.
@@ -188,7 +231,9 @@ class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClient
   }
 
   void getToken() async {
-    String? firebaseToken = await FirebaseMessaging.instance.getToken(vapidKey: 'BIfSAPxXNxdo1Op2i2QY9XY4orb7QclmiGD5fOmKfwB9UbS1MDZXjT1KInp0xuqyu5VK8AtIhWk0A8_yB9s0lyQ');
+    String? firebaseToken = await FirebaseMessaging.instance.getToken(
+        vapidKey:
+            'BIfSAPxXNxdo1Op2i2QY9XY4orb7QclmiGD5fOmKfwB9UbS1MDZXjT1KInp0xuqyu5VK8AtIhWk0A8_yB9s0lyQ');
     print('firebase token');
     print(firebaseToken);
     User? currentUser = context.read<AuthProvider>().getUser();
@@ -198,7 +243,9 @@ class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClient
     print(currentFcmToken);
 
     if (firebaseToken != null && currentFcmToken != firebaseToken) {
-      bool res = await context.read<AuthProvider>().updateUserData({'fcm_token': firebaseToken});
+      bool res = await context
+          .read<AuthProvider>()
+          .updateUserData({'fcm_token': firebaseToken});
     }
     print('res');
   }
@@ -206,6 +253,8 @@ class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClient
   @override
   void initState() {
     super.initState();
+
+    MessagingService().requestPermission();
 
     getToken();
     streamInit();
@@ -220,7 +269,8 @@ class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClient
     );
 
     setState(() {
-      lstWeedDays = DateHelper.getDaysInWeek(context.read<OrderProvider>().selectedDate);
+      lstWeedDays =
+          DateHelper.getDaysInWeek(context.read<OrderProvider>().selectedDate);
     });
   }
 
@@ -253,7 +303,9 @@ class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClient
               ),
             ),
             content: material.Card(
-              surfaceTintColor: FluentTheme.of(context).navigationPaneTheme.overlayBackgroundColor,
+              surfaceTintColor: FluentTheme.of(context)
+                  .navigationPaneTheme
+                  .overlayBackgroundColor,
               elevation: 4,
               margin: EdgeInsets.zero,
               child: material.CalendarDatePicker(
@@ -295,12 +347,14 @@ class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClient
               List<Map<String, dynamic>> lstDayMap = [];
 
               List<OrderModel> orderList = snapshot.data as List<OrderModel>;
-              List<DateTime> lstDayDistinct = orderList.map((e) => e.date).toSet().toList();
+              List<DateTime> lstDayDistinct =
+                  orderList.map((e) => e.date).toSet().toList();
               print('order list length');
               print(orderList.length);
 
               for (var date in lstDayDistinct) {
-                List<OrderModel> orderListOfTheDay = orderList.where((element) => element.date == date).toList();
+                List<OrderModel> orderListOfTheDay =
+                    orderList.where((element) => element.date == date).toList();
 
                 Map<String, dynamic> map = {
                   'date': date,
@@ -334,7 +388,10 @@ class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClient
                             children: [
                               Text(
                                 '${DateHelper.getFormattedDate(data['date'])}',
-                                style: FluentTheme.of(context).typography.subtitle!.copyWith(
+                                style: FluentTheme.of(context)
+                                    .typography
+                                    .subtitle!
+                                    .copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
@@ -343,13 +400,19 @@ class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClient
                                 children: [
                                   TextSpan(
                                     text: '${data['order'].length}',
-                                    style: FluentTheme.of(context).typography.subtitle!.copyWith(
+                                    style: FluentTheme.of(context)
+                                        .typography
+                                        .subtitle!
+                                        .copyWith(
                                           fontWeight: FontWeight.bold,
                                         ),
                                   ),
                                   TextSpan(
                                     text: ' orders',
-                                    style: FluentTheme.of(context).typography.subtitle!.copyWith(
+                                    style: FluentTheme.of(context)
+                                        .typography
+                                        .subtitle!
+                                        .copyWith(
                                           fontWeight: FontWeight.normal,
                                         ),
                                   ),
@@ -430,5 +493,6 @@ class HorizontalSliverList extends StatelessWidget {
     );
   }
 
-  Widget addDivider() => divider ?? Padding(padding: const EdgeInsets.symmetric(horizontal: 8));
+  Widget addDivider() =>
+      divider ?? Padding(padding: const EdgeInsets.symmetric(horizontal: 8));
 }

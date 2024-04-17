@@ -49,9 +49,9 @@ dependencies:
   flutter_local_notifications: ^17.0.1
   get: ^4.6.6
   flutter_timezone: ^1.0.8
-  device_info_plus: ^10.1.0
   image: ^4.1.7
   add_2_calendar: ^3.0.1
+  device_calendar: ^4.3.2
 
 dev_dependencies:
   flutter_test:

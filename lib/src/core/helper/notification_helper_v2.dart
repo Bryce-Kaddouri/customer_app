@@ -30,15 +30,20 @@ class NotificationHelperV2 {
 
   int notificationId = 0;
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   /// Streams are created so that app can respond to notification-related events
   /// since the plugin is initialised in the `main` function
-  final StreamController<ReceivedNotification> didReceiveLocalNotificationStream = StreamController<ReceivedNotification>.broadcast();
+  final StreamController<ReceivedNotification>
+      didReceiveLocalNotificationStream =
+      StreamController<ReceivedNotification>.broadcast();
 
-  final StreamController<String?> selectNotificationStream = StreamController<String?>.broadcast();
+  final StreamController<String?> selectNotificationStream =
+      StreamController<String?>.broadcast();
 
-  static const MethodChannel platform = MethodChannel('dexterx.dev/flutter_local_notifications_example');
+  static const MethodChannel platform =
+      MethodChannel('dexterx.dev/flutter_local_notifications_example');
 
   bool _notificationsEnabled = false;
 
@@ -50,7 +55,11 @@ class NotificationHelperV2 {
 
   Future<void> _isAndroidPermissionGranted() async {
     if (Platform.isAndroid) {
-      final bool granted = await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.areNotificationsEnabled() ?? false;
+      final bool granted = await flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin>()
+              ?.areNotificationsEnabled() ??
+          false;
 
       _notificationsEnabled = granted;
     }
@@ -58,20 +67,29 @@ class NotificationHelperV2 {
 
   Future<void> _requestPermissions() async {
     if (Platform.isIOS || Platform.isMacOS) {
-      await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()?.requestPermissions(
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
             alert: true,
             badge: true,
             sound: true,
           );
-      await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<MacOSFlutterLocalNotificationsPlugin>()?.requestPermissions(
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
             alert: true,
             badge: true,
             sound: true,
           );
     } else if (Platform.isAndroid) {
-      final AndroidFlutterLocalNotificationsPlugin? androidImplementation = flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+          flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
 
-      final bool? grantedNotificationPermission = await androidImplementation?.requestNotificationsPermission();
+      final bool? grantedNotificationPermission =
+          await androidImplementation?.requestNotificationsPermission();
 
       _notificationsEnabled = grantedNotificationPermission ?? false;
     }
@@ -93,7 +111,8 @@ class NotificationHelperV2 {
     });
   }
 
-  Future<void> showNotificationWithActions(int id, String title, String body, Map<String, dynamic> payloadMap, String? imageUrl) async {
+  Future<void> showNotificationWithActions(int id, String title, String body,
+      Map<String, dynamic> payloadMap, String? imageUrl) async {
     String payloadString = jsonEncode(payloadMap);
 
     final ByteArrayAndroidBitmap? largeIcon;
@@ -101,7 +120,8 @@ class NotificationHelperV2 {
 
     if (imageUrl != null) {
       largeIcon = ByteArrayAndroidBitmap(await _getByteArrayFromUrl(imageUrl!));
-      bigPicture = ByteArrayAndroidBitmap(await _getByteArrayFromUrl(imageUrl!));
+      bigPicture =
+          ByteArrayAndroidBitmap(await _getByteArrayFromUrl(imageUrl!));
     } else {
       largeIcon = null;
       bigPicture = null;
@@ -174,12 +194,6 @@ class NotificationHelperV2 {
         actions: <AndroidNotificationAction>[
           AndroidNotificationAction(
             urlLaunchActionId,
-            'Action 1',
-            icon: DrawableResourceAndroidBitmap('food'),
-            contextual: true,
-          ),
-          AndroidNotificationAction(
-            urlLaunchActionId,
             'Close',
             titleColor: Color.fromARGB(255, 255, 0, 0),
             icon: DrawableResourceAndroidBitmap('secondary_icon'),
@@ -188,26 +202,29 @@ class NotificationHelperV2 {
           AndroidNotificationAction(
             navigationActionId,
             'Add To Calendar',
-            titleColor: Colors.red,
-            showsUserInterface: false,
+            titleColor: Colors.greenAccent,
+            showsUserInterface: true,
             contextual: false,
             // By default, Android plugin will dismiss the notification when the
             // user tapped on a action (this mimics the behavior on iOS).
-            cancelNotification: false,
+            cancelNotification: true,
           ),
         ],
       );
     }
 
-    const DarwinNotificationDetails iosNotificationDetails = DarwinNotificationDetails(
+    const DarwinNotificationDetails iosNotificationDetails =
+        DarwinNotificationDetails(
       categoryIdentifier: darwinNotificationCategoryPlain,
     );
 
-    const DarwinNotificationDetails macOSNotificationDetails = DarwinNotificationDetails(
+    const DarwinNotificationDetails macOSNotificationDetails =
+        DarwinNotificationDetails(
       categoryIdentifier: darwinNotificationCategoryPlain,
     );
 
-    const LinuxNotificationDetails linuxNotificationDetails = LinuxNotificationDetails(
+    const LinuxNotificationDetails linuxNotificationDetails =
+        LinuxNotificationDetails(
       actions: <LinuxNotificationAction>[
         LinuxNotificationAction(
           key: urlLaunchActionId,
@@ -226,7 +243,8 @@ class NotificationHelperV2 {
       macOS: macOSNotificationDetails,
       linux: linuxNotificationDetails,
     );
-    await flutterLocalNotificationsPlugin.show(id, title, body, notificationDetails, payload: payloadString);
+    await flutterLocalNotificationsPlugin
+        .show(id, title, body, notificationDetails, payload: payloadString);
   }
 
   Future<Uint8List> _getByteArrayFromUrl(String url) async {
@@ -249,12 +267,27 @@ class NotificationHelperV2 {
     return base64Data;
   }
 
-  Future<void> showBigPictureNotificationURL(String title, String body, String imgUrl) async {
-    final String largeIconPath = await _downloadAndSaveFile('https://dummyimage.com/48x48', 'largeIcon');
-    final String bigPicturePath = await _downloadAndSaveFile('https://dummyimage.com/400x800', 'bigPicture');
-    final BigPictureStyleInformation bigPictureStyleInformation = BigPictureStyleInformation(FilePathAndroidBitmap(bigPicturePath), largeIcon: FilePathAndroidBitmap(largeIconPath), contentTitle: 'overridden <b>big</b> content title', htmlFormatContentTitle: true, summaryText: 'summary <i>text</i>', htmlFormatSummaryText: true);
-    final AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails('big text channel id', 'big text channel name', channelDescription: 'big text channel description', styleInformation: bigPictureStyleInformation);
-    final NotificationDetails notificationDetails = NotificationDetails(android: androidNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(0, 'big text title', 'silent body', notificationDetails);
+  Future<void> showBigPictureNotificationURL(
+      String title, String body, String imgUrl) async {
+    final String largeIconPath =
+        await _downloadAndSaveFile('https://dummyimage.com/48x48', 'largeIcon');
+    final String bigPicturePath = await _downloadAndSaveFile(
+        'https://dummyimage.com/400x800', 'bigPicture');
+    final BigPictureStyleInformation bigPictureStyleInformation =
+        BigPictureStyleInformation(FilePathAndroidBitmap(bigPicturePath),
+            largeIcon: FilePathAndroidBitmap(largeIconPath),
+            contentTitle: 'overridden <b>big</b> content title',
+            htmlFormatContentTitle: true,
+            summaryText: 'summary <i>text</i>',
+            htmlFormatSummaryText: true);
+    final AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+            'big text channel id', 'big text channel name',
+            channelDescription: 'big text channel description',
+            styleInformation: bigPictureStyleInformation);
+    final NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'big text title', 'silent body', notificationDetails);
   }
 }
