@@ -1,8 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-// ignore: unnecessary_import
-import 'dart:typed_data';
 
 import 'package:customer_app/src/core/constant/route.dart';
 import 'package:customer_app/src/core/helper/notification_helper.dart';
@@ -29,19 +26,14 @@ import 'package:customer_app/src/feature/order/data/datasource/order_datasource.
 import 'package:customer_app/src/feature/order/data/repository/order_repository_impl.dart';
 import 'package:customer_app/src/feature/order/presentation/provider/order_provider.dart';
 import 'package:customer_app/src/feature/provider/theme_provider.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
-import 'package:image/image.dart' as image;
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -342,9 +334,11 @@ const String darwinNotificationCategoryPlain = 'plainCategory';
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
   // ignore: avoid_print
-  print('notification(${notificationResponse.id}) action tapped: '
+  print('notification(${notificationResponse.id}) action tapped bg: '
       '${notificationResponse.actionId} with'
       ' payload: ${notificationResponse.payload}');
+  selectNotificationStream.add(notificationResponse.payload);
+
   if (notificationResponse.input?.isNotEmpty ?? false) {
     // ignore: avoid_print
     print('notification action tapped with input: ${notificationResponse.input}');
@@ -377,102 +371,13 @@ Future<void> main() async {
   await _configureLocalTimeZone();
 
   final NotificationAppLaunchDetails? notificationAppLaunchDetails = !kIsWeb && Platform.isLinux ? null : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
-  String initialRoute = HomePage.routeName;
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
     selectedNotificationPayload = notificationAppLaunchDetails!.notificationResponse?.payload;
+/*
     initialRoute = SecondPage.routeName;
+*/
   }
 
-  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
-
-  final List<DarwinNotificationCategory> darwinNotificationCategories = <DarwinNotificationCategory>[
-    DarwinNotificationCategory(
-      darwinNotificationCategoryText,
-      actions: <DarwinNotificationAction>[
-        DarwinNotificationAction.text(
-          'text_1',
-          'Action 1',
-          buttonTitle: 'Send',
-          placeholder: 'Placeholder',
-        ),
-      ],
-    ),
-    DarwinNotificationCategory(
-      darwinNotificationCategoryPlain,
-      actions: <DarwinNotificationAction>[
-        DarwinNotificationAction.plain('id_1', 'Action 1'),
-        DarwinNotificationAction.plain(
-          'id_2',
-          'Action 2 (destructive)',
-          options: <DarwinNotificationActionOption>{
-            DarwinNotificationActionOption.destructive,
-          },
-        ),
-        DarwinNotificationAction.plain(
-          navigationActionId,
-          'Action 3 (foreground)',
-          options: <DarwinNotificationActionOption>{
-            DarwinNotificationActionOption.foreground,
-          },
-        ),
-        DarwinNotificationAction.plain(
-          'id_4',
-          'Action 4 (auth required)',
-          options: <DarwinNotificationActionOption>{
-            DarwinNotificationActionOption.authenticationRequired,
-          },
-        ),
-      ],
-      options: <DarwinNotificationCategoryOption>{
-        DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
-      },
-    )
-  ];
-
-  /// Note: permissions aren't requested here just to demonstrate that can be
-  /// done later
-  final DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings(
-    requestAlertPermission: false,
-    requestBadgePermission: false,
-    requestSoundPermission: false,
-    onDidReceiveLocalNotification: (int id, String? title, String? body, String? payload) async {
-      didReceiveLocalNotificationStream.add(
-        ReceivedNotification(
-          id: id,
-          title: title,
-          body: body,
-          payload: payload,
-        ),
-      );
-    },
-    notificationCategories: darwinNotificationCategories,
-  );
-  final LinuxInitializationSettings initializationSettingsLinux = LinuxInitializationSettings(
-    defaultActionName: 'Open notification',
-    defaultIcon: AssetsLinuxIcon('icons/app_icon.png'),
-  );
-  final InitializationSettings initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid,
-    iOS: initializationSettingsDarwin,
-    macOS: initializationSettingsDarwin,
-    linux: initializationSettingsLinux,
-  );
-  await flutterLocalNotificationsPlugin.initialize(
-    initializationSettings,
-    onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) {
-      switch (notificationResponse.notificationResponseType) {
-        case NotificationResponseType.selectedNotification:
-          selectNotificationStream.add(notificationResponse.payload);
-          break;
-        case NotificationResponseType.selectedNotificationAction:
-          if (notificationResponse.actionId == navigationActionId) {
-            selectNotificationStream.add(notificationResponse.payload);
-          }
-          break;
-      }
-    },
-    onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
-  );
   /*runApp(
     MaterialApp(
       initialRoute: initialRoute,
@@ -528,6 +433,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     router = RouterHelper().getRouter(context);
+
     MessagingService().listenMessage(context);
     MessagingService().listenMessageBackground(context);
   }
@@ -573,6 +479,7 @@ class PaddedElevatedButton extends StatelessWidget {
       );
 }
 
+/*
 class HomePage extends StatefulWidget {
   const HomePage(
     this.notificationAppLaunchDetails, {
@@ -664,16 +571,20 @@ class _HomePageState extends State<HomePage> {
   void _configureSelectNotificationSubject() {
     selectNotificationStream.stream.listen((String? payload) async {
       print('selectNotificationStream: $payload');
-      /*await Navigator.of(context).push(
+      */
+/*await Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (BuildContext context) => SecondPage(payload),
         ),
-      );*/
+      );*/ /*
+
       context.push('/second/$payload');
 
-      /*await Navigator.of(context).push(MaterialPageRoute<void>(
+      */
+/*await Navigator.of(context).push(MaterialPageRoute<void>(
         builder: (BuildContext context) => SecondPage(payload),
-      ));*/
+      ));*/ /*
+
     });
   }
 
@@ -2882,3 +2793,4 @@ class _InfoValueString extends StatelessWidget {
         ),
       );
 }
+*/

@@ -53,7 +53,7 @@ class MessagingService {
     );
   }
 
-  Future<void> setupFlutterNotifications() async {
+  /*Future<void> setupFlutterNotifications() async {
     if (isFlutterLocalNotificationsInitialized) {
       return;
     }
@@ -74,7 +74,7 @@ class MessagingService {
       sound: true,
     );
     isFlutterLocalNotificationsInitialized = true;
-  }
+  }*/
 
   Future<void> onNotificationClick(NotificationResponse response) async {
     print('onNotificationClick');
@@ -232,7 +232,7 @@ class MessagingService {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('A new onMessageOpenedApp event was published!');
       print('Message data: ${message.data}');
-      if (message.data['orderId'] != null) {
+      if (message.data['order_id'] != null) {
         NotificationHelperV2(context: context).showNotificationWithActions(message.notification.hashCode, message.notification!.title!, message.notification!.body!, message.data, null);
         /* FirestoreService().getOrderDetailsByOrderId(message.data['orderId']).then((value) {
           Navigator.push(
