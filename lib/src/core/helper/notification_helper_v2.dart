@@ -93,15 +93,15 @@ class NotificationHelperV2 {
     });
   }
 
-  Future<void> showNotificationWithActions(String title, String body, Map<String, dynamic> payloadMap, String? imageUrl) async {
+  Future<void> showNotificationWithActions(int id, String title, String body, Map<String, dynamic> payloadMap, String? imageUrl) async {
     String payloadString = jsonEncode(payloadMap);
 
     final ByteArrayAndroidBitmap? largeIcon;
     final ByteArrayAndroidBitmap? bigPicture;
 
     if (imageUrl != null) {
-      largeIcon = ByteArrayAndroidBitmap(await _getByteArrayFromUrl('https://dummyimage.com/48x48'));
-      bigPicture = ByteArrayAndroidBitmap(await _getByteArrayFromUrl('https://dummyimage.com/400x800'));
+      largeIcon = ByteArrayAndroidBitmap(await _getByteArrayFromUrl(imageUrl!));
+      bigPicture = ByteArrayAndroidBitmap(await _getByteArrayFromUrl(imageUrl!));
     } else {
       largeIcon = null;
       bigPicture = null;
@@ -127,10 +127,16 @@ class NotificationHelperV2 {
         ticker: 'ticker',
         styleInformation: BigPictureStyleInformation(
           bigPicture!,
+/*
           largeIcon: largeIcon,
+*/
+/*
           contentTitle: 'overridden <b>big</b> content title',
+*/
           htmlFormatContentTitle: true,
+/*
           summaryText: 'summary <i>text</i>',
+*/
           htmlFormatSummaryText: true,
         ),
         /* actions: <AndroidNotificationAction>[
@@ -166,15 +172,14 @@ class NotificationHelperV2 {
         priority: Priority.high,
         ticker: 'ticker',
         actions: <AndroidNotificationAction>[
-          /*AndroidNotificationAction(
+          AndroidNotificationAction(
             urlLaunchActionId,
             'Action 1',
             icon: DrawableResourceAndroidBitmap('food'),
             contextual: true,
           ),
-          */
           AndroidNotificationAction(
-            'id_2',
+            urlLaunchActionId,
             'Close',
             titleColor: Color.fromARGB(255, 255, 0, 0),
             icon: DrawableResourceAndroidBitmap('secondary_icon'),
@@ -183,7 +188,6 @@ class NotificationHelperV2 {
           AndroidNotificationAction(
             navigationActionId,
             'Add To Calendar',
-            icon: DrawableResourceAndroidBitmap('secondary_icon'),
             titleColor: Colors.red,
             showsUserInterface: false,
             contextual: false,
@@ -222,7 +226,7 @@ class NotificationHelperV2 {
       macOS: macOSNotificationDetails,
       linux: linuxNotificationDetails,
     );
-    await flutterLocalNotificationsPlugin.show(notificationId++, title, body, notificationDetails, payload: payloadString);
+    await flutterLocalNotificationsPlugin.show(id, title, body, notificationDetails, payload: payloadString);
   }
 
   Future<Uint8List> _getByteArrayFromUrl(String url) async {

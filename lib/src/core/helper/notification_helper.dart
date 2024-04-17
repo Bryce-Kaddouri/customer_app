@@ -213,12 +213,12 @@ class MessagingService {
       if (message.notification != null) {
         print('Message also contained a notification: ${message.notification!.toMap()}');
         if (message.data['order_id'] != null) {
-          NotificationHelperV2(context: context).showNotificationWithActions(message.notification!.title!, message.notification!.body!, message.data, null);
+          NotificationHelperV2(context: context).showNotificationWithActions(message.notification.hashCode, message.notification!.title!, message.notification!.body!, message.data, null);
         } else {
           String img = message.notification!.android!.imageUrl!;
           print('img');
           print(img);
-          NotificationHelperV2(context: context).showNotificationWithActions(message.notification!.title!, message.notification!.body!, message.data, img);
+          NotificationHelperV2(context: context).showNotificationWithActions(message.notification.hashCode, message.notification!.title!, message.notification!.body!, message.data, img);
         }
 /*
         await HomePage.showBigPictureNotification();
@@ -233,7 +233,7 @@ class MessagingService {
       print('A new onMessageOpenedApp event was published!');
       print('Message data: ${message.data}');
       if (message.data['orderId'] != null) {
-        NotificationHelperV2(context: context).showNotificationWithActions(message.notification!.title!, message.notification!.body!, message.data, null);
+        NotificationHelperV2(context: context).showNotificationWithActions(message.notification.hashCode, message.notification!.title!, message.notification!.body!, message.data, null);
         /* FirestoreService().getOrderDetailsByOrderId(message.data['orderId']).then((value) {
           Navigator.push(
             context,
@@ -249,7 +249,7 @@ class MessagingService {
         String img = message.notification!.android!.imageUrl!;
         print('img');
         print(img);
-        NotificationHelperV2(context: context).showNotificationWithActions(message.notification!.title!, message.notification!.body!, message.data, img);
+        NotificationHelperV2(context: context).showNotificationWithActions(message.notification.hashCode, message.notification!.title!, message.notification!.body!, message.data, img);
       }
     });
   }
