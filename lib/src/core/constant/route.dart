@@ -1,6 +1,8 @@
 import 'package:customer_app/src/feature/auth/presentation/screen/otp_screen.dart';
+import 'package:customer_app/src/feature/reminder/presentation/screen/callendar_event_screen.dart';
+import 'package:customer_app/src/feature/reminder/presentation/screen/reminder_screen.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart' hide IconButton;
+import 'package:flutter/material.dart' hide IconButton, Button, ButtonStyle, ListTile;
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -90,7 +92,24 @@ class RouterHelper {
               ),
               GoRoute(
                 path: '/reminder',
-                builder: (context, state) => Container(),
+                builder: (context, state) => ReminderScreen(),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    builder: (context, state) {
+                      print(state.pathParameters);
+                      if (state.pathParameters.isEmpty || state.pathParameters['id'] == null) {
+                        return ScaffoldPage(
+                            content: Center(
+                          child: Text('Loading...'),
+                        ));
+                      } else {
+                        int reminderId = int.parse(state.pathParameters['id']!);
+                        return EventRemindersPage([]);
+                      }
+                    },
+                  ),
+                ],
               ),
             ]),
         GoRoute(
@@ -140,6 +159,8 @@ class BottomNavigationBarScaffold extends StatefulWidget {
 }
 
 class _BottomNavigationBarScaffoldState extends State<BottomNavigationBarScaffold> {
+  FlyoutController flyController = FlyoutController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,13 +179,78 @@ class _BottomNavigationBarScaffoldState extends State<BottomNavigationBarScaffol
                   : 'Notifications',
         ),
         actions: [
-          IconButton(
+          /*IconButton(
             icon: Icon(
               FluentIcons.settings,
               size: 24,
             ),
             onPressed: () {},
-          ),
+          ),*/
+
+          FlyoutTarget(
+              controller: flyController,
+              child: Container(
+                  height: 40,
+                  width: 40,
+                  child: Button(
+                    style: ButtonStyle(
+                      padding: ButtonState.all(EdgeInsets.all(0)),
+                      shape: ButtonState.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                    ),
+                    child: const Text('Clear cart'),
+                    onPressed: () {
+                      flyController.showFlyout(
+                        autoModeConfiguration: FlyoutAutoConfiguration(
+                          preferredMode: FlyoutPlacementMode.topCenter,
+                        ),
+                        barrierDismissible: true,
+                        dismissOnPointerMoveAway: false,
+                        dismissWithEsc: true,
+                        builder: (context) {
+                          return FlyoutContent(
+                            child: Container(
+                              width: 200,
+                              padding: const EdgeInsets.all(12.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ListTile(
+                                    leading: const Icon(FluentIcons.contact),
+                                    title: const Text(
+                                      'Profile',
+                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12.0),
+                                  Button(
+                                    onPressed: () {},
+                                    child: const Text('Yes, empty my cart'),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            /*Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'All items will be removed. Do you want to continue?',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 12.0),
+                            Button(
+                              onPressed: Flyout.of(context).close,
+                              child: const Text('Yes, empty my cart'),
+                            ),
+                          ],
+                        ),*/
+                          );
+                        },
+                      );
+                    },
+                  ))),
           SizedBox(width: 10),
         ],
       ),
