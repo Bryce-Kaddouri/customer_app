@@ -4,8 +4,7 @@ import 'package:pinput/pinput.dart';
 class FilledRoundedPinPut extends StatefulWidget {
   final TextEditingController controller;
 
-  const FilledRoundedPinPut({Key? key, required this.controller})
-      : super(key: key);
+  const FilledRoundedPinPut({Key? key, required this.controller}) : super(key: key);
 
   @override
   _FilledRoundedPinPutState createState() => _FilledRoundedPinPutState();
@@ -39,15 +38,23 @@ class _FilledRoundedPinPutState extends State<FilledRoundedPinPut> {
             fontSize: 22,
             color: const Color.fromRGBO(30, 60, 87, 1),
           ),
-      decoration: BoxDecoration(
-          color: fillColor,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.transparent)),
+      decoration: BoxDecoration(color: fillColor, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.transparent)),
     );
 
     return SizedBox(
       height: 68,
       child: Pinput(
+        listenForMultipleSmsOnAndroid: true,
+        androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsRetrieverApi,
+        onAppPrivateCommand: (str, map) {
+          print(str);
+          print(map);
+        },
+        onClipboardFound: (value) {
+          if (value.length == 6 && int.tryParse(value) != null) {
+            widget.controller.text = value;
+          }
+        },
         validator: (String? value) {
           if (value == null || value.isEmpty) {
             return 'Please enter a valid OTP';
