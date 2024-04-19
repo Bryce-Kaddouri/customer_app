@@ -589,28 +589,10 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                       _event?.title = value;
                                     },
                                   ),
-                                )
-                                /*TextFormField(
-                                key: const Key('titleField'),
-                                initialValue: _event?.title,
-                                decoration: const InputDecoration(labelText: 'Title', hintText: 'Meeting with Gloria...'),
-                                validator: _validateTitle,
-                                onSaved: (String? value) {
-                                  _event?.title = value;
-                                },
-                              ),*/
-                                ),
+                                )),
                             Padding(
                               padding: const EdgeInsets.all(10.0),
-                              child:
-                                  /*TextFormField(
-                                initialValue: _event?.description,
-                                decoration: const InputDecoration(labelText: 'Description', hintText: 'Remember to buy flowers...'),
-                                onSaved: (String? value) {
-                                  _event?.description = value;
-                                },
-                              ),*/
-                                  fluent.InfoLabel(
+                              child: fluent.InfoLabel(
                                 label: 'Description:',
                                 child: fluent.TextFormBox(
                                   key: const Key('descriptionField'),
@@ -623,14 +605,7 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.all(10.0),
-                              child: /*TextFormField(
-                                initialValue: _event?.location,
-                                decoration: const InputDecoration(labelText: 'Location', hintText: 'Sydney, Australia'),
-                                onSaved: (String? value) {
-                                  _event?.location = value;
-                                },
-                              ),*/
-                                  fluent.InfoLabel(
+                              child: fluent.InfoLabel(
                                 label: 'Location:',
                                 child: fluent.TextFormBox(
                                   key: const Key('locationField'),
@@ -641,107 +616,11 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                 ),
                               ),
                             ),
-                            /*Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: TextFormField(
-                                initialValue: _event?.url?.data?.contentText ?? '',
-                                decoration: const InputDecoration(labelText: 'URL', hintText: 'https://google.com'),
-                                onSaved: (String? value) {
-                                  if (value != null) {
-                                    var uri = Uri.dataFromString(value);
-                                    _event?.url = uri;
-                                  }
-                                },
-                              ),
-                            ),*/
-                            /*ListTile(
-                              leading: const Text(
-                                'Availability',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              trailing: DropdownButton<Availability>(
-                                value: _availability,
-                                onChanged: (Availability? newValue) {
-                                  setState(() {
-                                    if (newValue != null) {
-                                      _availability = newValue;
-                                      _event?.availability = newValue;
-                                    }
-                                  });
-                                },
-                                items: Availability.values.map<DropdownMenuItem<Availability>>((Availability value) {
-                                  return DropdownMenuItem<Availability>(
-                                    value: value,
-                                    child: Text(value.enumToString),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                            if (Platform.isAndroid)
-                              ListTile(
-                                leading: const Text(
-                                  'Status',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                trailing: DropdownButton<EventStatus>(
-                                  value: _eventStatus,
-                                  onChanged: (EventStatus? newValue) {
-                                    setState(() {
-                                      if (newValue != null) {
-                                        _eventStatus = newValue;
-                                        _event?.status = newValue;
-                                      }
-                                    });
-                                  },
-                                  items: EventStatus.values.map<DropdownMenuItem<EventStatus>>((EventStatus value) {
-                                    return DropdownMenuItem<EventStatus>(
-                                      value: value,
-                                      child: Text(value.enumToString),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),*/
-                            /*SwitchListTile(
-                              value: _event?.allDay ?? false,
-                              onChanged: (value) => setState(() => _event?.allDay = value),
-                              title: const Text('All Day'),
-                            ),*/
-                            /*fluent.InfoLabel(
-                              label: 'All Day:',
-                              isHeader: false,
-                              child: fluent.ToggleSwitch(
-                                checked: _event?.allDay ?? false,
-                                onChanged: (value) => setState(() => _event?.allDay = value),
-                              ),
-                            ),*/
 
                             if (_startDate != null)
                               Padding(
                                 padding: const EdgeInsets.all(10.0),
-                                child: /*DateTimePicker(
-                                  labelText: 'From',
-                                  enableTime: _event?.allDay == false,
-                                  selectedDate: _startDate,
-                                  selectedTime: _startTime,
-                                  selectDate: (DateTime date) {
-                                    setState(() {
-                                      var currentLocation = timeZoneDatabase.locations[_timezone];
-                                      if (currentLocation != null) {
-                                        _startDate = TZDateTime.from(date, currentLocation);
-                                        _event?.start = _combineDateWithTime(_startDate, _startTime);
-                                      }
-                                    });
-                                  },
-                                  selectTime: (TimeOfDay time) {
-                                    setState(
-                                      () {
-                                        _startTime = time;
-                                        _event?.start = _combineDateWithTime(_startDate, _startTime);
-                                      },
-                                    );
-                                  },
-                                ),*/
-                                    fluent.InfoLabel(
+                                child: fluent.InfoLabel(
                                   label: 'To:',
                                   child: Row(
                                     children: [
@@ -784,14 +663,7 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                             if ((_event?.allDay == false) && Platform.isAndroid)
                               Padding(
                                 padding: const EdgeInsets.all(10.0),
-                                child: /*TextFormField(
-                                  initialValue: _event?.start?.location.name,
-                                  decoration: const InputDecoration(labelText: 'Start date time zone', hintText: 'Australia/Sydney'),
-                                  onSaved: (String? value) {
-                                    _event?.updateStartLocation(value);
-                                  },
-                                ),*/
-                                    fluent.InfoLabel(
+                                child: fluent.InfoLabel(
                                   label: 'Start date time zone:',
                                   child: fluent.TextFormBox(
                                     key: const Key('startDateTimeZoneField'),
@@ -807,33 +679,7 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                             if (_event?.allDay == false || Platform.isAndroid)
                               Padding(
                                 padding: const EdgeInsets.all(10.0),
-                                child: /*DateTimePicker(
-                                  labelText: 'To',
-                                  selectedDate: _endDate,
-                                  selectedTime: _endTime,
-                                  enableTime: _event?.allDay == false,
-                                  selectDate: (DateTime date) {
-                                    setState(
-                                      () {
-                                        var currentLocation = timeZoneDatabase.locations[_timezone];
-                                        if (currentLocation != null) {
-                                          _endDate = TZDateTime.from(date, currentLocation);
-                                          _event?.end = _combineDateWithTime(_endDate, _endTime);
-                                        }
-                                      },
-                                    );
-                                  },
-                                  selectTime: (TimeOfDay time) {
-                                    setState(
-                                      () {
-                                        _endTime = time;
-                                        _event?.end = _combineDateWithTime(_endDate, _endTime);
-                                      },
-                                    );
-                                  },
-                                ),*/
-
-                                    fluent.InfoLabel(
+                                child: fluent.InfoLabel(
                                   label: 'To:',
                                   child: Row(
                                     children: [
@@ -876,12 +722,7 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                             if (_event?.allDay == false && Platform.isAndroid)
                               Padding(
                                 padding: const EdgeInsets.all(10.0),
-                                child: /*TextFormField(
-                                  initialValue: _event?.end?.location.name,
-                                  decoration: const InputDecoration(labelText: 'End date time zone', hintText: 'Australia/Sydney'),
-                                  onSaved: (String? value) => _event?.updateEndLocation(value),
-                                ),*/
-                                    fluent.InfoLabel(
+                                child: fluent.InfoLabel(
                                   label: 'End date time zone:',
                                   child: fluent.TextFormBox(
                                     key: const Key('endDateTimeZoneField'),
@@ -890,83 +731,7 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                   ),
                                 ),
                               ),
-                            /*ListTile(
-                              onTap: _calendar!.isReadOnly == false
-                                  ? () async {
-                                      var result = await Navigator.push(context, MaterialPageRoute(builder: (context) => const EventAttendeePage()));
-                                      if (result != null) {
-                                        setState(() {
-                                          _attendees.add(result);
-                                        });
-                                      }
-                                    }
-                                  : null,
-                              leading: const Icon(Icons.people),
-                              title: Text(_calendar!.isReadOnly == false ? 'Add Attendees' : 'Attendees'),
-                            ),*/
-                            /*ListView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: _attendees.length,
-                              itemBuilder: (context, index) {
-                                return Container(
-                                  color: (_attendees[index].isOrganiser)
-                                      ? MediaQuery.of(context).platformBrightness == Brightness.dark
-                                          ? Colors.black26
-                                          : Colors.greenAccent[100]
-                                      : Colors.transparent,
-                                  child: ListTile(
-                                    onTap: () async {
-                                      var result = await Navigator.push(context, MaterialPageRoute(builder: (context) => EventAttendeePage(attendee: _attendees[index], eventId: _event?.eventId)));
-                                      if (result != null) {
-                                        return setState(() {
-                                          _attendees[index] = result;
-                                        });
-                                      }
-                                    },
-                                    title: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                                      child: Text('${_attendees[index].name} (${_attendees[index].emailAddress})'),
-                                    ),
-                                    subtitle: Wrap(
-                                      spacing: 10,
-                                      direction: Axis.horizontal,
-                                      alignment: WrapAlignment.end,
-                                      children: <Widget>[
-                                        Visibility(
-                                          visible: _attendees[index].androidAttendeeDetails != null,
-                                          child: Container(margin: const EdgeInsets.symmetric(vertical: 10.0), padding: const EdgeInsets.all(3.0), decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)), child: Text('Android: ${_attendees[index].androidAttendeeDetails?.attendanceStatus?.enumToString}')),
-                                        ),
-                                        Visibility(
-                                          visible: _attendees[index].iosAttendeeDetails != null,
-                                          child: Container(margin: const EdgeInsets.symmetric(vertical: 10.0), padding: const EdgeInsets.all(3.0), decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)), child: Text('iOS: ${_attendees[index].iosAttendeeDetails?.attendanceStatus?.enumToString}')),
-                                        ),
-                                        Visibility(visible: _attendees[index].isCurrentUser, child: Container(margin: const EdgeInsets.symmetric(vertical: 10.0), padding: const EdgeInsets.all(3.0), decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)), child: const Text('current user'))),
-                                        Visibility(visible: _attendees[index].isOrganiser, child: Container(margin: const EdgeInsets.symmetric(vertical: 10.0), padding: const EdgeInsets.all(3.0), decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)), child: const Text('Organiser'))),
-                                        Container(
-                                          margin: const EdgeInsets.symmetric(vertical: 10.0),
-                                          padding: const EdgeInsets.all(3.0),
-                                          decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)),
-                                          child: Text('${_attendees[index].role?.enumToString}'),
-                                        ),
-                                        IconButton(
-                                          padding: const EdgeInsets.all(0),
-                                          onPressed: () {
-                                            setState(() {
-                                              _attendees.removeAt(index);
-                                            });
-                                          },
-                                          icon: const Icon(
-                                            Icons.remove_circle,
-                                            color: Colors.redAccent,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),*/
+
                             GestureDetector(
                               onTap: () async {
                                 var result = await Navigator.push(context, MaterialPageRoute(builder: (context) => EventRemindersPage()));
@@ -987,269 +752,8 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                 ),
                               ),
                             ),
-                            /* CheckboxListTile(
-                              value: _isRecurringEvent,
-                              title: const Text('Is recurring'),
-                              onChanged: (isChecked) {
-                                setState(() {
-                                  _isRecurringEvent = isChecked ?? false;
-                                });
-                              },
-                            ),
-                            if (_isRecurringEvent) ...[
-                              ListTile(
-                                leading: const Text('Select a Recurrence Type'),
-                                trailing: DropdownButton<RecurrenceFrequency>(
-                                  onChanged: (selectedFrequency) {
-                                    setState(() {
-                                      _recurrenceFrequency = selectedFrequency;
-                                      _getValidDaysOfMonth(_recurrenceFrequency);
-                                    });
-                                  },
-                                  value: _recurrenceFrequency,
-                                  items: RecurrenceFrequency.values
-                                      .map((frequency) => DropdownMenuItem(
-                                            value: frequency,
-                                            child: _recurrenceFrequencyToText(frequency),
-                                          ))
-                                      .toList(),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
-                                child: Row(
-                                  children: <Widget>[
-                                    const Text('Repeat Every '),
-                                    Flexible(
-                                      child: TextFormField(
-                                        initialValue: _interval?.toString() ?? '1',
-                                        decoration: const InputDecoration(hintText: '1'),
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(2)],
-                                        validator: _validateInterval,
-                                        textAlign: TextAlign.right,
-                                        onSaved: (String? value) {
-                                          if (value != null) {
-                                            _interval = int.tryParse(value);
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                    _recurrenceFrequencyToIntervalText(_recurrenceFrequency),
-                                  ],
-                                ),
-                              ),
-                              if (_recurrenceFrequency == RecurrenceFrequency.Weekly) ...[
-                                Column(
-                                  children: [
-                                    ...DayOfWeek.values.map((day) {
-                                      return CheckboxListTile(
-                                        title: Text(day.enumToString),
-                                        value: _daysOfWeek.any((dow) => dow == day),
-                                        onChanged: (selected) {
-                                          setState(() {
-                                            if (selected == true) {
-                                              _daysOfWeek.add(day);
-                                            } else {
-                                              _daysOfWeek.remove(day);
-                                            }
-                                            _updateDaysOfWeekGroup(selectedDay: day);
-                                          });
-                                        },
-                                      );
-                                    }),
-                                    const Divider(color: Colors.black),
-                                    ...DayOfWeekGroup.values.map((group) {
-                                      return RadioListTile(
-                                          title: Text(group.enumToString),
-                                          value: group,
-                                          groupValue: _dayOfWeekGroup,
-                                          onChanged: (selected) {
-                                            setState(() {
-                                              _dayOfWeekGroup = selected as DayOfWeekGroup;
-                                              _updateDaysOfWeek();
-                                            });
-                                          },
-                                          controlAffinity: ListTileControlAffinity.trailing);
-                                    }),
-                                  ],
-                                )
-                              ],
-                              if (_recurrenceFrequency == RecurrenceFrequency.Monthly || _recurrenceFrequency == RecurrenceFrequency.Yearly) ...[
-                                SwitchListTile(
-                                  value: _isByDayOfMonth,
-                                  onChanged: (value) => setState(() => _isByDayOfMonth = value),
-                                  title: const Text('By day of the month'),
-                                )
-                              ],
-                              if (_recurrenceFrequency == RecurrenceFrequency.Yearly && _isByDayOfMonth) ...[
-                                ListTile(
-                                  leading: const Text('Month of the year'),
-                                  trailing: DropdownButton<MonthOfYear>(
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _monthOfYear = value;
-                                        _getValidDaysOfMonth(_recurrenceFrequency);
-                                      });
-                                    },
-                                    value: _monthOfYear,
-                                    items: MonthOfYear.values
-                                        .map((month) => DropdownMenuItem(
-                                              value: month,
-                                              child: Text(month.enumToString),
-                                            ))
-                                        .toList(),
-                                  ),
-                                ),
-                              ],
-                              if (_isByDayOfMonth && (_recurrenceFrequency == RecurrenceFrequency.Monthly || _recurrenceFrequency == RecurrenceFrequency.Yearly)) ...[
-                                ListTile(
-                                  leading: const Text('Day of the month'),
-                                  trailing: DropdownButton<int>(
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _dayOfMonth = value;
-                                      });
-                                    },
-                                    value: _dayOfMonth,
-                                    items: _validDaysOfMonth
-                                        .map((day) => DropdownMenuItem(
-                                              value: day,
-                                              child: Text(day.toString()),
-                                            ))
-                                        .toList(),
-                                  ),
-                                ),
-                              ],
-                              if (!_isByDayOfMonth && (_recurrenceFrequency == RecurrenceFrequency.Monthly || _recurrenceFrequency == RecurrenceFrequency.Yearly)) ...[
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                                  child: Align(alignment: Alignment.centerLeft, child: _recurrenceFrequencyToText(_recurrenceFrequency).data != null ? Text(_recurrenceFrequencyToText(_recurrenceFrequency).data! + ' on the ') : const Text('')),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Flexible(
-                                        child: DropdownButton<WeekNumber>(
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _weekOfMonth = value;
-                                            });
-                                          },
-                                          value: _weekOfMonth ?? WeekNumber.First,
-                                          items: WeekNumber.values
-                                              .map((weekNum) => DropdownMenuItem(
-                                                    value: weekNum,
-                                                    child: Text(weekNum.enumToString),
-                                                  ))
-                                              .toList(),
-                                        ),
-                                      ),
-                                      Flexible(
-                                        child: DropdownButton<DayOfWeek>(
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _selectedDayOfWeek = value;
-                                            });
-                                          },
-                                          value: _selectedDayOfWeek != null ? DayOfWeek.values[_selectedDayOfWeek!.index] : DayOfWeek.values[0],
-                                          items: DayOfWeek.values
-                                              .map((day) => DropdownMenuItem(
-                                                    value: day,
-                                                    child: Text(day.enumToString),
-                                                  ))
-                                              .toList(),
-                                        ),
-                                      ),
-                                      if (_recurrenceFrequency == RecurrenceFrequency.Yearly) ...[
-                                        const Text('of'),
-                                        Flexible(
-                                          child: DropdownButton<MonthOfYear>(
-                                            onChanged: (value) {
-                                              setState(() {
-                                                _monthOfYear = value;
-                                              });
-                                            },
-                                            value: _monthOfYear,
-                                            items: MonthOfYear.values
-                                                .map((month) => DropdownMenuItem(
-                                                      value: month,
-                                                      child: Text(month.enumToString),
-                                                    ))
-                                                .toList(),
-                                          ),
-                                        ),
-                                      ]
-                                    ],
-                                  ),
-                                ),
-                              ],
-                              ListTile(
-                                leading: const Text('Event ends'),
-                                trailing: DropdownButton<RecurrenceRuleEndType>(
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _recurrenceRuleEndType = value;
-                                    });
-                                  },
-                                  value: _recurrenceRuleEndType,
-                                  items: RecurrenceRuleEndType.values
-                                      .map((frequency) => DropdownMenuItem(
-                                            value: frequency,
-                                            child: _recurrenceRuleEndTypeToText(frequency),
-                                          ))
-                                      .toList(),
-                                ),
-                              ),
-                              if (_recurrenceRuleEndType == RecurrenceRuleEndType.MaxOccurrences)
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
-                                  child: Row(
-                                    children: <Widget>[
-                                      const Text('For the next '),
-                                      Flexible(
-                                        child: TextFormField(
-                                          initialValue: _totalOccurrences?.toString() ?? '1',
-                                          decoration: const InputDecoration(hintText: '1'),
-                                          keyboardType: TextInputType.number,
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter.digitsOnly,
-                                            LengthLimitingTextInputFormatter(3),
-                                          ],
-                                          validator: _validateTotalOccurrences,
-                                          textAlign: TextAlign.right,
-                                          onSaved: (String? value) {
-                                            if (value != null) {
-                                              _totalOccurrences = int.tryParse(value);
-                                            }
-                                          },
-                                        ),
-                                      ),
-                                      const Text(' occurrences'),
-                                    ],
-                                  ),
-                                ),
-                              if (_recurrenceRuleEndType == RecurrenceRuleEndType.SpecifiedEndDate)
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: DateTimePicker(
-                                    labelText: 'Date',
-                                    enableTime: false,
-                                    selectedDate: _recurrenceEndDate,
-                                    selectDate: (DateTime date) {
-                                      setState(() {
-                                        _recurrenceEndDate = date;
-                                      });
-                                    },
-                                  ),
-                                ),
 
-                            ],
-                               */
-
-                            if (_event?.reminders != null && _event!.reminders!.isNotEmpty)
+                            if (_event != null && _event!.reminders != null && _event!.reminders!.isNotEmpty)
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 child: fluent.Column(

@@ -5,9 +5,8 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:flutter/services.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-
-import 'callendar_event_screen.dart';
 
 class ReminderScreen extends StatefulWidget {
   const ReminderScreen({super.key});
@@ -174,7 +173,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
   }
 
   Future _onTapped(Event event) async {
-    final refreshEvents = await Navigator.push(context, mat.MaterialPageRoute(builder: (BuildContext context) {
+    /*final refreshEvents = await Navigator.push(context, mat.MaterialPageRoute(builder: (BuildContext context) {
       return CalendarEventPage(
         event: event,
         recurringEventDialog: RecurringEventDialog(
@@ -187,7 +186,9 @@ class _ReminderScreenState extends State<ReminderScreen> {
     }));
     if (refreshEvents != null && refreshEvents) {
       await _retrieveCalendarEvents();
-    }
+    }*/
+
+    context.go('/reminder/detail/${event.eventId}', extra: event.toJson());
   }
 
   @override
@@ -224,22 +225,6 @@ class _ReminderScreenState extends State<ReminderScreen> {
               child: Column(
               children: [
                 Text('No events found'),
-                Button(
-                  child: Text('Add Event'),
-                  onPressed: () {
-                    String calendarId = _calendar?.id ?? '';
-                    print('calendarId: $calendarId');
-                    _onTapped(
-                      Event(
-                        calendarId,
-                        start: TZDateTime.now(timeZoneDatabase.locations['Asia/Ho_Chi_Minh']!),
-                        end: TZDateTime.now(timeZoneDatabase.locations['Asia/Ho_Chi_Minh']!).add(const Duration(hours: 1)),
-                        attendees: [],
-                        reminders: [],
-                      ),
-                    );
-                  },
-                )
               ],
             )),
     );
@@ -302,7 +287,7 @@ class _EventItemState extends State<EventItem> {
                         children: [
                           SizedBox(
                             width: _eventFieldNameWidth,
-                            child: const Text('Starts'),
+                            child: const Text('From'),
                           ),
                           Text(
                             widget._calendarEvent == null
@@ -324,7 +309,7 @@ class _EventItemState extends State<EventItem> {
                         children: [
                           SizedBox(
                             width: _eventFieldNameWidth,
-                            child: const Text('Ends'),
+                            child: const Text('To'),
                           ),
                           Text(
                             widget._calendarEvent?.end == null
@@ -339,122 +324,11 @@ class _EventItemState extends State<EventItem> {
                   const SizedBox(
                     height: 10.0,
                   ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: _eventFieldNameWidth,
-                          child: const Text('All day?'),
-                        ),
-                        Text(widget._calendarEvent?.allDay != null && widget._calendarEvent?.allDay == true ? 'Yes' : 'No')
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10.0,
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: _eventFieldNameWidth,
-                          child: const Text('Location'),
-                        ),
-                        Expanded(
-                          child: Text(
-                            widget._calendarEvent?.location ?? '',
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10.0,
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: _eventFieldNameWidth,
-                          child: const Text('URL'),
-                        ),
-                        Expanded(
-                          child: Text(
-                            widget._calendarEvent?.url?.data?.contentText ?? '',
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10.0,
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: _eventFieldNameWidth,
-                          child: const Text('Attendees'),
-                        ),
-                        Expanded(
-                          child: Text(
-                            widget._calendarEvent?.attendees?.where((a) => a?.name?.isNotEmpty ?? false).map((a) => a?.name).join(', ') ?? '',
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10.0,
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: _eventFieldNameWidth,
-                          child: const Text('Availability'),
-                        ),
-                        Expanded(
-                          child: Text(
-                            widget._calendarEvent?.availability.enumToString ?? '',
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10.0,
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: _eventFieldNameWidth,
-                          child: const Text('Status'),
-                        ),
-                        Expanded(
-                          child: Text(
-                            widget._calendarEvent?.status?.enumToString ?? '',
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),
-            mat.ButtonBar(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 if (!widget._isReadOnly) ...[
                   IconButton(
@@ -463,7 +337,7 @@ class _EventItemState extends State<EventItem> {
                         widget._onTapped(widget._calendarEvent as Event);
                       }
                     },
-                    icon: const Icon(mat.Icons.edit),
+                    icon: Icon(mat.Icons.edit, color: Colors.blue, size: 20.0),
                   ),
                   IconButton(
                     onPressed: () async {
@@ -472,16 +346,18 @@ class _EventItemState extends State<EventItem> {
                         barrierDismissible: false,
                         builder: (BuildContext context) {
                           if (widget._calendarEvent?.recurrenceRule == null) {
-                            return mat.AlertDialog(
-                              title: const Text('Are you sure you want to delete this event?'),
+                            return ContentDialog(
+                              title: Container(
+                                alignment: Alignment.center,
+                                child: const Text('Delete Event'),
+                              ),
+                              content: Container(
+                                height: 60.0,
+                                alignment: Alignment.center,
+                                child: const Text('Are you sure you want to delete this event?'),
+                              ),
                               actions: [
-                                mat.TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Cancel'),
-                                ),
-                                mat.TextButton(
+                                FilledButton(
                                   onPressed: () async {
                                     Navigator.of(context).pop();
                                     widget._onLoadingStarted();
@@ -489,6 +365,12 @@ class _EventItemState extends State<EventItem> {
                                     widget._onDeleteFinished(deleteResult.isSuccess && deleteResult.data != null);
                                   },
                                   child: const Text('Delete'),
+                                ),
+                                Button(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Cancel'),
                                 ),
                               ],
                             );
@@ -501,7 +383,7 @@ class _EventItemState extends State<EventItem> {
                         },
                       );
                     },
-                    icon: const Icon(mat.Icons.delete),
+                    icon: Icon(mat.Icons.delete, color: Colors.red, size: 20.0),
                   ),
                 ] else ...[
                   IconButton(

@@ -132,15 +132,10 @@ class RouterHelper {
           path: '/reminder/detail/:id',
           builder: (context, state) {
             print(state.pathParameters);
-            if (state.pathParameters.isEmpty || state.pathParameters['id'] == null) {
-              return ScaffoldPage(
-                  content: Center(
-                child: Text('Loading...'),
-              ));
-            } else {
-              int reminderId = int.parse(state.pathParameters['id']!);
-              return EventRemindersPage();
-            }
+            Map<String, dynamic>? extra = state.extra as Map<String, dynamic>?;
+            return CalendarEventPage(
+              extra: extra,
+            );
           },
         ),
         GoRoute(
