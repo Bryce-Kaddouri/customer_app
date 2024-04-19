@@ -12,6 +12,71 @@ import 'callendar_event_screen.dart';
 class ReminderScreen extends StatefulWidget {
   const ReminderScreen({super.key});
 
+  static Future<Calendar?> retrieveCalendar(BuildContext context) async {
+    var deviceCalendarPlugin = DeviceCalendarPlugin();
+    try {
+      var permissionsGranted = await deviceCalendarPlugin.hasPermissions();
+      if (permissionsGranted.isSuccess && (permissionsGranted.data == null || permissionsGranted.data == false)) {
+        permissionsGranted = await deviceCalendarPlugin.requestPermissions();
+        if (!permissionsGranted.isSuccess || permissionsGranted.data == null || permissionsGranted.data == false) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return ContentDialog(
+                title: Text('Permission Required'),
+                content: Text('Please allow the app to access your calendar'),
+                actions: [
+                  Button(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('OK'),
+                  )
+                ],
+              );
+            },
+          );
+        }
+      }
+
+      final calendarsResult = await deviceCalendarPlugin.retrieveCalendars();
+      print('calendarsResult: ${calendarsResult.data}');
+
+      List<Calendar> calendarsTemp = calendarsResult.data as List<Calendar>;
+
+      bool calendarExist = false;
+      Calendar calendarTemp = Calendar();
+      for (var calendar in calendarsTemp) {
+        if (calendar.name == "Customer Calendar App") {
+          calendarExist = true;
+          calendarTemp = calendar;
+          break;
+        }
+      }
+
+      if (calendarExist) {
+        return calendarTemp;
+      } else {
+        // create calendar
+        final createCalendarResult = await deviceCalendarPlugin.createCalendar("Customer Calendar App", calendarColor: Colors.yellow, localAccountName: "Customer Calendar App");
+        if (createCalendarResult.isSuccess && createCalendarResult.data != null) {
+          Calendar calendar = Calendar(
+            id: createCalendarResult.data as String,
+            name: "Customer Calendar App",
+            isReadOnly: false,
+            isDefault: false,
+            color: Colors.yellow.value,
+            accountName: "Customer Calendar App",
+          );
+          return calendar;
+        }
+      }
+    } on PlatformException catch (e) {
+      throw Exception(e);
+      print(e);
+    }
+  }
+
   @override
   State<ReminderScreen> createState() => _ReminderScreenState();
 }
@@ -22,13 +87,13 @@ class _ReminderScreenState extends State<ReminderScreen> {
   List<Event> _calendarEvents = [];
   bool _isLoading = true;
 
-  void _retrieveCalendars() async {
+  Future<bool> _retrieveCalendars() async {
     try {
       var permissionsGranted = await _deviceCalendarPlugin.hasPermissions();
       if (permissionsGranted.isSuccess && (permissionsGranted.data == null || permissionsGranted.data == false)) {
         permissionsGranted = await _deviceCalendarPlugin.requestPermissions();
         if (!permissionsGranted.isSuccess || permissionsGranted.data == null || permissionsGranted.data == false) {
-          return;
+          false;
         }
       }
 
@@ -68,15 +133,19 @@ class _ReminderScreenState extends State<ReminderScreen> {
           });
         }
       }
+      return true;
     } on PlatformException catch (e) {
       print(e);
+      return false;
     }
   }
 
   Future _retrieveCalendarEvents() async {
+    print('retrieveCalendarEvents');
+
     final startDate = DateTime.now().add(const Duration(days: -30));
     final endDate = DateTime.now().add(const Duration(days: 30));
-    var calendarEventsResult = await _deviceCalendarPlugin.retrieveEvents(_calendar?.id, RetrieveEventsParams(startDate: startDate, endDate: endDate));
+    var calendarEventsResult = await _deviceCalendarPlugin.retrieveEvents(_calendar!.id, RetrieveEventsParams(startDate: startDate, endDate: endDate));
     setState(() {
       _calendarEvents = calendarEventsResult.data ?? <Event>[] as List<Event>;
       _isLoading = false;
@@ -107,9 +176,8 @@ class _ReminderScreenState extends State<ReminderScreen> {
   Future _onTapped(Event event) async {
     final refreshEvents = await Navigator.push(context, mat.MaterialPageRoute(builder: (BuildContext context) {
       return CalendarEventPage(
-        _calendar!,
-        event,
-        RecurringEventDialog(
+        event: event,
+        recurringEventDialog: RecurringEventDialog(
           _deviceCalendarPlugin,
           event,
           _onLoading,
@@ -126,8 +194,9 @@ class _ReminderScreenState extends State<ReminderScreen> {
   void initState() {
     super.initState();
     _deviceCalendarPlugin = DeviceCalendarPlugin();
-    _retrieveCalendars();
-    _retrieveCalendarEvents();
+    _retrieveCalendars().whenComplete(() {
+      _retrieveCalendarEvents();
+    });
   }
 
   @override
@@ -139,6 +208,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
           ? Stack(
               children: [
                 ListView.builder(
+                  padding: const EdgeInsets.all(10.0),
                   itemCount: _calendarEvents.length,
                   itemBuilder: (BuildContext context, int index) {
                     return EventItem(_calendarEvents[index], _deviceCalendarPlugin, _onLoading, _onDeletedFinished, _onTapped, _calendar?.isReadOnly != null && _calendar?.isReadOnly as bool);
@@ -150,7 +220,28 @@ class _ReminderScreenState extends State<ReminderScreen> {
                   )
               ],
             )
-          : const Center(child: Text('No events found')),
+          : Center(
+              child: Column(
+              children: [
+                Text('No events found'),
+                Button(
+                  child: Text('Add Event'),
+                  onPressed: () {
+                    String calendarId = _calendar?.id ?? '';
+                    print('calendarId: $calendarId');
+                    _onTapped(
+                      Event(
+                        calendarId,
+                        start: TZDateTime.now(timeZoneDatabase.locations['Asia/Ho_Chi_Minh']!),
+                        end: TZDateTime.now(timeZoneDatabase.locations['Asia/Ho_Chi_Minh']!).add(const Duration(hours: 1)),
+                        attendees: [],
+                        reminders: [],
+                      ),
+                    );
+                  },
+                )
+              ],
+            )),
     );
   }
 }
@@ -191,6 +282,7 @@ class _EventItemState extends State<EventItem> {
         }
       },
       child: Card(
+        margin: const EdgeInsets.only(bottom: 10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

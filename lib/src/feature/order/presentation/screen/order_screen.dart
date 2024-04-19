@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:customer_app/src/feature/auth/presentation/provider/auth_provider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -25,8 +24,7 @@ class OrderScreen extends StatefulWidget {
 }
 
 // keep alive mixin
-class _OrderScreenState extends State<OrderScreen>
-    with AutomaticKeepAliveClientMixin {
+class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClientMixin {
   ScrollController _mainScrollController = ScrollController();
   ScrollController _testController = ScrollController();
   List<DateTime> lstWeedDays = [];
@@ -43,11 +41,9 @@ class _OrderScreenState extends State<OrderScreen>
     /// Defines a iOS/MacOS notification category for plain actions.
     const String darwinNotificationCategoryPlain = 'plainCategory';
 
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('app_icon');
+    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
 
-    final List<DarwinNotificationCategory> darwinNotificationCategories =
-        <DarwinNotificationCategory>[
+    final List<DarwinNotificationCategory> darwinNotificationCategories = <DarwinNotificationCategory>[
       DarwinNotificationCategory(
         darwinNotificationCategoryText,
         actions: <DarwinNotificationAction>[
@@ -93,13 +89,11 @@ class _OrderScreenState extends State<OrderScreen>
 
     /// Note: permissions aren't requested here just to demonstrate that can be
     /// done later
-    final DarwinInitializationSettings initializationSettingsDarwin =
-        DarwinInitializationSettings(
+    final DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
-      onDidReceiveLocalNotification:
-          (int id, String? title, String? body, String? payload) async {
+      onDidReceiveLocalNotification: (int id, String? title, String? body, String? payload) async {
         /* didReceiveLocalNotificationStream.add(
           ReceivedNotification(
             id: id,
@@ -111,13 +105,11 @@ class _OrderScreenState extends State<OrderScreen>
       },
       notificationCategories: darwinNotificationCategories,
     );
-    final LinuxInitializationSettings initializationSettingsLinux =
-        LinuxInitializationSettings(
+    final LinuxInitializationSettings initializationSettingsLinux = LinuxInitializationSettings(
       defaultActionName: 'Open notification',
       defaultIcon: AssetsLinuxIcon('icons/app_icon.png'),
     );
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
+    final InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsDarwin,
       macOS: initializationSettingsDarwin,
@@ -126,25 +118,18 @@ class _OrderScreenState extends State<OrderScreen>
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse:
-          (NotificationResponse notificationResponse) {
+      onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) {
         print('onDidReceiveNotificationResponse');
         switch (notificationResponse.notificationResponseType) {
           case NotificationResponseType.selectedNotification:
             print(notificationResponse.payload);
             if (notificationResponse.payload != null) {
-              print(
-                  'notificationResponse.payload from on tap: ${notificationResponse.payload}');
-              Map<String, dynamic> payload =
-                  jsonDecode(notificationResponse.payload!);
-              if (payload['order_date'] != null &&
-                  payload['order_id'] != null) {
-                print(
-                    'notificationResponse.payload id: ${payload['order_id']}');
-                print(
-                    'notificationResponse.payload date: ${payload['order_date']}');
-                context.push(
-                    '/orders/${payload['order_date']}/${payload['order_id']}');
+              print('notificationResponse.payload from on tap: ${notificationResponse.payload}');
+              Map<String, dynamic> payload = jsonDecode(notificationResponse.payload!);
+              if (payload['order_date'] != null && payload['order_id'] != null) {
+                print('notificationResponse.payload id: ${payload['order_id']}');
+                print('notificationResponse.payload date: ${payload['order_date']}');
+                context.push('/orders/${payload['order_date']}/${payload['order_id']}');
               }
             }
 
@@ -155,34 +140,23 @@ class _OrderScreenState extends State<OrderScreen>
             if (notificationResponse.actionId == navigationActionId) {
               print('tap on add calendar');
 
-              print(
-                  'notificationResponse.payload from on tap: ${notificationResponse.payload}');
+              print('notificationResponse.payload from on tap: ${notificationResponse.payload}');
 
               if (notificationResponse.payload != null) {
-                print(
-                    'notificationResponse.payload from on tap: ${notificationResponse.payload}');
-                Map<String, dynamic> payload =
-                    jsonDecode(notificationResponse.payload!);
-                if (payload['order_date'] != null &&
-                    payload['order_id'] != null &&
-                    payload['order_hour'] != null) {
-                  print(
-                      'notificationResponse.payload id: ${payload['order_id']}');
-                  print(
-                      'notificationResponse.payload date: ${payload['order_date']}');
+                print('notificationResponse.payload from on tap: ${notificationResponse.payload}');
+                Map<String, dynamic> payload = jsonDecode(notificationResponse.payload!);
+                if (payload['order_date'] != null && payload['order_id'] != null && payload['order_time'] != null) {
+                  print('notificationResponse.payload id: ${payload['order_id']}');
+                  print('notificationResponse.payload date: ${payload['order_date']}');
                   DateTime orderDate = DateTime.parse(payload['order_date']);
-                  List<String> orderHour = payload['order_hour'].split(':');
-                  material.TimeOfDay hour = material.TimeOfDay(
-                      hour: int.parse(orderHour[0]),
-                      minute: int.parse(orderHour[1]));
+                  List<String> orderHour = payload['order_time'].split(':');
+                  material.TimeOfDay hour = material.TimeOfDay(hour: int.parse(orderHour[0]), minute: int.parse(orderHour[1]));
                   print('Add to calendar');
-                  final Event event = Event(
+                  /* final Event event = Event(
                     title: 'Customer App - Collect Order',
-                    description:
-                        'Collect Your Order at ${hour.format(context)}',
-                    location:
-                        '7 Castle View Rd, Clondalkin, Dublin 22, D22 V082, Irlande',
-                    /*  recurrence: Recurrence(
+                    description: 'Collect Your Order at ${hour.format(context)}',
+                    location: '7 Castle View Rd, Clondalkin, Dublin 22, D22 V082, Irlande',
+                    */ /*  recurrence: Recurrence(
                         frequency: Frequency.daily,
                         ocurrences: 2,
                         endDate: hour.hour < 8
@@ -193,23 +167,28 @@ class _OrderScreenState extends State<OrderScreen>
                                     second: 0)
                                 .subtract(Duration(hours: 2))
                             : orderDate.copyWith(hour: 8, minute: 8, second: 8),
-                        interval: 1),*/
+                        interval: 1),*/ /*
 
-                    startDate: orderDate.copyWith(
-                        hour: hour.hour, minute: hour.minute, second: 0),
-                    endDate: orderDate.copyWith(
-                        hour: hour.hour, minute: hour.minute, second: 0),
+                    startDate: orderDate.copyWith(hour: hour.hour, minute: hour.minute, second: 0),
+                    endDate: orderDate.copyWith(hour: hour.hour, minute: hour.minute, second: 0),
                     iosParams: IOSParams(
-                      reminder: Duration(
-                          hours:
-                              1), // on iOS, you can set alarm notification after your event.
+                      reminder: Duration(hours: 1), // on iOS, you can set alarm notification after your event.
                     ),
                     androidParams: AndroidParams(
                       emailInvites: [], // on Android, you can add invite emails to your event.
                     ),
-                  );
+                  );*/
 
-                  Add2Calendar.addEvent2Cal(event);
+                  /*Add2Calendar.addEvent2Cal(event);*/
+
+                  context.go(
+                    '/reminder/add',
+                    extra: {
+                      'order_id': payload['order_id'],
+                      'order_date': payload['order_date'],
+                      'order_time': payload['order_time'],
+                    },
+                  );
                 }
               }
 
@@ -231,9 +210,7 @@ class _OrderScreenState extends State<OrderScreen>
   }
 
   void getToken() async {
-    String? firebaseToken = await FirebaseMessaging.instance.getToken(
-        vapidKey:
-            'BIfSAPxXNxdo1Op2i2QY9XY4orb7QclmiGD5fOmKfwB9UbS1MDZXjT1KInp0xuqyu5VK8AtIhWk0A8_yB9s0lyQ');
+    String? firebaseToken = await FirebaseMessaging.instance.getToken(vapidKey: 'BIfSAPxXNxdo1Op2i2QY9XY4orb7QclmiGD5fOmKfwB9UbS1MDZXjT1KInp0xuqyu5VK8AtIhWk0A8_yB9s0lyQ');
     print('firebase token');
     print(firebaseToken);
     User? currentUser = context.read<AuthProvider>().getUser();
@@ -243,9 +220,7 @@ class _OrderScreenState extends State<OrderScreen>
     print(currentFcmToken);
 
     if (firebaseToken != null && currentFcmToken != firebaseToken) {
-      bool res = await context
-          .read<AuthProvider>()
-          .updateUserData({'fcm_token': firebaseToken});
+      bool res = await context.read<AuthProvider>().updateUserData({'fcm_token': firebaseToken});
     }
     print('res');
   }
@@ -269,8 +244,7 @@ class _OrderScreenState extends State<OrderScreen>
     );
 
     setState(() {
-      lstWeedDays =
-          DateHelper.getDaysInWeek(context.read<OrderProvider>().selectedDate);
+      lstWeedDays = DateHelper.getDaysInWeek(context.read<OrderProvider>().selectedDate);
     });
   }
 
@@ -303,9 +277,7 @@ class _OrderScreenState extends State<OrderScreen>
               ),
             ),
             content: material.Card(
-              surfaceTintColor: FluentTheme.of(context)
-                  .navigationPaneTheme
-                  .overlayBackgroundColor,
+              surfaceTintColor: FluentTheme.of(context).navigationPaneTheme.overlayBackgroundColor,
               elevation: 4,
               margin: EdgeInsets.zero,
               child: material.CalendarDatePicker(
@@ -347,14 +319,12 @@ class _OrderScreenState extends State<OrderScreen>
               List<Map<String, dynamic>> lstDayMap = [];
 
               List<OrderModel> orderList = snapshot.data as List<OrderModel>;
-              List<DateTime> lstDayDistinct =
-                  orderList.map((e) => e.date).toSet().toList();
+              List<DateTime> lstDayDistinct = orderList.map((e) => e.date).toSet().toList();
               print('order list length');
               print(orderList.length);
 
               for (var date in lstDayDistinct) {
-                List<OrderModel> orderListOfTheDay =
-                    orderList.where((element) => element.date == date).toList();
+                List<OrderModel> orderListOfTheDay = orderList.where((element) => element.date == date).toList();
 
                 Map<String, dynamic> map = {
                   'date': date,
@@ -388,10 +358,7 @@ class _OrderScreenState extends State<OrderScreen>
                             children: [
                               Text(
                                 '${DateHelper.getFormattedDate(data['date'])}',
-                                style: FluentTheme.of(context)
-                                    .typography
-                                    .subtitle!
-                                    .copyWith(
+                                style: FluentTheme.of(context).typography.subtitle!.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
@@ -400,19 +367,13 @@ class _OrderScreenState extends State<OrderScreen>
                                 children: [
                                   TextSpan(
                                     text: '${data['order'].length}',
-                                    style: FluentTheme.of(context)
-                                        .typography
-                                        .subtitle!
-                                        .copyWith(
+                                    style: FluentTheme.of(context).typography.subtitle!.copyWith(
                                           fontWeight: FontWeight.bold,
                                         ),
                                   ),
                                   TextSpan(
                                     text: ' orders',
-                                    style: FluentTheme.of(context)
-                                        .typography
-                                        .subtitle!
-                                        .copyWith(
+                                    style: FluentTheme.of(context).typography.subtitle!.copyWith(
                                           fontWeight: FontWeight.normal,
                                         ),
                                   ),
@@ -493,6 +454,5 @@ class HorizontalSliverList extends StatelessWidget {
     );
   }
 
-  Widget addDivider() =>
-      divider ?? Padding(padding: const EdgeInsets.symmetric(horizontal: 8));
+  Widget addDivider() => divider ?? Padding(padding: const EdgeInsets.symmetric(horizontal: 8));
 }

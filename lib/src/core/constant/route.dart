@@ -1,8 +1,8 @@
+import 'package:customer_app/src/core/constant/app_color.dart';
 import 'package:customer_app/src/feature/auth/presentation/screen/otp_screen.dart';
-import 'package:customer_app/src/feature/reminder/presentation/screen/callendar_event_screen.dart';
 import 'package:customer_app/src/feature/reminder/presentation/screen/reminder_screen.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart' hide IconButton, Button, ButtonStyle, ListTile;
+import 'package:flutter/material.dart' hide IconButton, Button, ButtonStyle, Colors, ListTile, Card;
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +12,7 @@ import '../../feature/auth/presentation/screen/signin_screen.dart';
 import '../../feature/notification/presentation/screen/notification_list_screen.dart';
 import '../../feature/order/presentation/screen/order_detail_screen.dart';
 import '../../feature/order/presentation/screen/order_screen.dart';
+import '../../feature/reminder/presentation/screen/callendar_event_screen.dart';
 import '../share_component/botom_nav_bar_widget.dart';
 
 /*class Routes {
@@ -93,23 +94,6 @@ class RouterHelper {
               GoRoute(
                 path: '/reminder',
                 builder: (context, state) => ReminderScreen(),
-                routes: [
-                  GoRoute(
-                    path: ':id',
-                    builder: (context, state) {
-                      print(state.pathParameters);
-                      if (state.pathParameters.isEmpty || state.pathParameters['id'] == null) {
-                        return ScaffoldPage(
-                            content: Center(
-                          child: Text('Loading...'),
-                        ));
-                      } else {
-                        int reminderId = int.parse(state.pathParameters['id']!);
-                        return EventRemindersPage([]);
-                      }
-                    },
-                  ),
-                ],
               ),
             ]),
         GoRoute(
@@ -141,6 +125,32 @@ class RouterHelper {
             String phone = state.pathParameters['phone']!;
             return OtpScreen(
               phoneNumber: phone,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/reminder/detail/:id',
+          builder: (context, state) {
+            print(state.pathParameters);
+            if (state.pathParameters.isEmpty || state.pathParameters['id'] == null) {
+              return ScaffoldPage(
+                  content: Center(
+                child: Text('Loading...'),
+              ));
+            } else {
+              int reminderId = int.parse(state.pathParameters['id']!);
+              return EventRemindersPage();
+            }
+          },
+        ),
+        GoRoute(
+          path: '/reminder/add',
+          builder: (context, state) {
+            print(state.pathParameters);
+            print(state.extra);
+            Map<String, dynamic>? extra = state.extra as Map<String, dynamic>?;
+            return CalendarEventPage(
+              extra: extra,
             );
           },
         ),
@@ -187,51 +197,74 @@ class _BottomNavigationBarScaffoldState extends State<BottomNavigationBarScaffol
             onPressed: () {},
           ),*/
 
-          FlyoutTarget(
-              controller: flyController,
-              child: Container(
-                  height: 40,
-                  width: 40,
-                  child: Button(
-                    style: ButtonStyle(
-                      padding: ButtonState.all(EdgeInsets.all(0)),
-                      shape: ButtonState.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
-                    ),
-                    child: const Text('Clear cart'),
-                    onPressed: () {
-                      flyController.showFlyout(
-                        autoModeConfiguration: FlyoutAutoConfiguration(
-                          preferredMode: FlyoutPlacementMode.topCenter,
+          widget.currentIndex == 0
+              ? FlyoutTarget(
+                  controller: flyController,
+                  child: Container(
+                      height: 40,
+                      width: 40,
+                      child: Button(
+                        style: ButtonStyle(
+                          backgroundColor: ButtonState.all(FluentTheme.of(context).navigationPaneTheme.backgroundColor),
+                          elevation: ButtonState.all(4),
+                          padding: ButtonState.all(EdgeInsets.all(0)),
+                          shape: ButtonState.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
                         ),
-                        barrierDismissible: true,
-                        dismissOnPointerMoveAway: false,
-                        dismissWithEsc: true,
-                        builder: (context) {
-                          return FlyoutContent(
-                            child: Container(
-                              width: 200,
-                              padding: const EdgeInsets.all(12.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ListTile(
-                                    leading: const Icon(FluentIcons.contact),
-                                    title: const Text(
-                                      'Profile',
-                                      style: TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12.0),
-                                  Button(
-                                    onPressed: () {},
-                                    child: const Text('Yes, empty my cart'),
-                                  ),
-                                ],
-                              ),
+                        child: const Icon(FluentIcons.contact, size: 24),
+                        onPressed: () {
+                          flyController.showFlyout(
+                            autoModeConfiguration: FlyoutAutoConfiguration(
+                              preferredMode: FlyoutPlacementMode.topRight,
                             ),
+                            barrierDismissible: true,
+                            dismissOnPointerMoveAway: false,
+                            dismissWithEsc: true,
+                            position: Offset(
+                              MediaQuery.of(context).size.width - 10,
+                              60,
+                            ),
+                            builder: (context) {
+                              return FlyoutContent(
+                                child: Container(
+                                  width: 200,
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Card(
+                                        padding: const EdgeInsets.all(0),
+                                        child: ListTile(
+                                          leading: const Icon(FluentIcons.contact),
+                                          title: const Text(
+                                            'Profile',
+                                            style: TextStyle(fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12.0),
+                                      Card(
+                                        padding: const EdgeInsets.all(0),
+                                        backgroundColor: AppColor.canceledBackgroundColor,
+                                        child: ListTile(
+                                          onPressed: () {
+                                            context.read<AuthProvider>().logout().then((value) {
+                                              context.go('/signin');
+                                            });
+                                          },
+                                          tileColor: ButtonState.all(Colors.transparent),
+                                          leading: const Icon(FluentIcons.sign_out, color: AppColor.canceledForegroundColor),
+                                          title: const Text(
+                                            'Sign out',
+                                            style: TextStyle(fontWeight: FontWeight.bold, color: AppColor.canceledForegroundColor),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
 
-                            /*Column(
+                                /*Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -246,11 +279,30 @@ class _BottomNavigationBarScaffoldState extends State<BottomNavigationBarScaffol
                             ),
                           ],
                         ),*/
+                              );
+                            },
                           );
                         },
-                      );
-                    },
-                  ))),
+                      )))
+              : widget.currentIndex == 1
+                  ? Button(
+                      style: ButtonStyle(
+                        backgroundColor: ButtonState.all(FluentTheme.of(context).navigationPaneTheme.backgroundColor),
+                        padding: ButtonState.all(EdgeInsets.all(0)),
+                      ),
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        child: Icon(
+                          FluentIcons.add_event,
+                          size: 24,
+                        ),
+                      ),
+                      onPressed: () {
+                        context.push('/reminder/add');
+                      },
+                    )
+                  : SizedBox(),
           SizedBox(width: 10),
         ],
       ),
