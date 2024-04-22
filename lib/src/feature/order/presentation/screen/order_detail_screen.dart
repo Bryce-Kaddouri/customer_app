@@ -34,26 +34,6 @@ class OrderDetailScreen extends StatelessWidget {
         backgroundColor: FluentTheme.of(context).navigationPaneTheme.backgroundColor,
         elevation: 4,
         title: Text('Order #${orderId}'),
-        actions: [
-          if (!orderDate.isBefore(DateTime.now().copyWith(hour: 0, minute: 0, second: 0, millisecond: 0)))
-            Button(
-              style: ButtonStyle(
-                padding: ButtonState.all(EdgeInsets.zero),
-              ),
-              child: Container(
-                height: 40,
-                width: 40,
-                child: Icon(FluentIcons.edit, size: 20),
-              ),
-              onPressed: () {
-                String orderDateStr = DateHelper.getFormattedDate(orderDate);
-                context.go('/orders/${orderDateStr}/${orderId}/update');
-              },
-            ),
-          SizedBox(
-            width: 10,
-          ),
-        ],
       ),
       body: FutureBuilder<OrderModel?>(
         future: context.read<OrderProvider>().getOrderDetail(orderId, orderDate),
@@ -311,6 +291,54 @@ class OrderDetailScreen extends StatelessWidget {
                       ),
                     ),
                   )*/
+
+                  Card(
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.blue,
+                              ),
+                              height: 40,
+                              width: 40,
+                              child: Text("1"),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              child: StatusWidget(status: 'pending'),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(left: 19),
+                          width: double.infinity,
+                          height: 40,
+                          child: Row(
+                            children: [
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                ),
+                                height: 50,
+                                width: 2,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
             );

@@ -127,7 +127,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> with Si
                                 if (index == 0) {
                                   return Container(
                                     alignment: Alignment.centerLeft,
-                                    margin: EdgeInsets.only(bottom: 10),
+                                    margin: const EdgeInsets.only(bottom: 10),
                                     child: Text(
                                       DateHelper.getFormattedDate(notificationByDateListPromotion[index].date),
                                       style: FluentTheme.of(context).typography.subtitle,
@@ -148,18 +148,16 @@ class _NotificationListScreenState extends State<NotificationListScreen> with Si
                                           onPressed: () {
                                             context.push<NotificationModel>('/notification/detail', extra: notification);
                                           },
-                                          leading: Container(
+                                          leading: Image.network(
+                                            notification.photoUrl ?? '',
+                                            fit: BoxFit.cover,
                                             height: 50,
                                             width: 50,
-                                            child: Image.network(
-                                              notification.photoUrl ?? '',
-                                              fit: BoxFit.cover,
-                                              height: 50,
-                                              width: 50,
-                                              errorBuilder: (context, error, stackTrace) {
-                                                return Container();
-                                              },
-                                            ),
+                                            errorBuilder: (context, error, stackTrace) {
+                                              return Container(
+                                                width: 0,
+                                              );
+                                            },
                                           ),
                                           title: Container(
                                             alignment: Alignment.centerLeft,
