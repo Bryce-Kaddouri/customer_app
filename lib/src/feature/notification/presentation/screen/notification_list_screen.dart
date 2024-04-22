@@ -21,8 +21,7 @@ class NotificationListScreen extends StatefulWidget {
   State<NotificationListScreen> createState() => _NotificationListScreenState();
 }
 
-class _NotificationListScreenState extends State<NotificationListScreen>
-    with SingleTickerProviderStateMixin {
+class _NotificationListScreenState extends State<NotificationListScreen> with SingleTickerProviderStateMixin {
   List<NotificationByDate> notificationByDateListOrder = [];
   List<NotificationByDate> notificationByDateListPromotion = [];
   bool isLoading = false;
@@ -41,46 +40,34 @@ class _NotificationListScreenState extends State<NotificationListScreen>
       if (value != null) {
         List<NotificationByDate> notificationByDateListTempOrder = [];
         List<NotificationByDate> notificationByDateListTempPromotion = [];
-        List<NotificationModel> orderNotifications =
-            value.where((element) => element.type != "PROMOTION").toList();
-        List<NotificationModel> promotionNotification =
-            value.where((element) => element.type == "PROMOTION").toList();
+        List<NotificationModel> orderNotifications = value.where((element) => element.type != "PROMOTION").toList();
+        List<NotificationModel> promotionNotification = value.where((element) => element.type == "PROMOTION").toList();
 
         for (var orderNotification in orderNotifications) {
           bool isExist = false;
-          for (NotificationByDate notificationByDate
-              in notificationByDateListTempOrder) {
-            if (DateHelper.isSameDay(
-                notificationByDate.date, orderNotification.createdAt)) {
+          for (NotificationByDate notificationByDate in notificationByDateListTempOrder) {
+            if (DateHelper.isSameDay(notificationByDate.date, orderNotification.createdAt)) {
               notificationByDate.notifications.add(orderNotification);
               isExist = true;
               break;
             }
           }
           if (!isExist) {
-            notificationByDateListTempOrder.add(NotificationByDate(
-                date: orderNotification.createdAt
-                    .copyWith(hour: 0, minute: 0, second: 0),
-                notifications: [orderNotification]));
+            notificationByDateListTempOrder.add(NotificationByDate(date: orderNotification.createdAt.copyWith(hour: 0, minute: 0, second: 0), notifications: [orderNotification]));
           }
         }
 
         for (var promotionNotification in promotionNotification) {
           bool isExist = false;
-          for (NotificationByDate notificationByDate
-              in notificationByDateListTempPromotion) {
-            if (DateHelper.isSameDay(
-                notificationByDate.date, promotionNotification.createdAt)) {
+          for (NotificationByDate notificationByDate in notificationByDateListTempPromotion) {
+            if (DateHelper.isSameDay(notificationByDate.date, promotionNotification.createdAt)) {
               notificationByDate.notifications.add(promotionNotification);
               isExist = true;
               break;
             }
           }
           if (!isExist) {
-            notificationByDateListTempPromotion.add(NotificationByDate(
-                date: promotionNotification.createdAt
-                    .copyWith(hour: 0, minute: 0, second: 0),
-                notifications: [promotionNotification]));
+            notificationByDateListTempPromotion.add(NotificationByDate(date: promotionNotification.createdAt.copyWith(hour: 0, minute: 0, second: 0), notifications: [promotionNotification]));
           }
         }
 
@@ -119,12 +106,10 @@ class _NotificationListScreenState extends State<NotificationListScreen>
                     controller: tabController,
                     tabs: [
                       mat.Tab(
-                        child: Text(
-                            "Promotion (${notificationByDateListPromotion.fold(0, (previousValue, element) => previousValue + element.notifications.length)})"),
+                        child: Text("Promotion (${notificationByDateListPromotion.fold(0, (previousValue, element) => previousValue + element.notifications.length)})"),
                       ),
                       mat.Tab(
-                        child: Text(
-                            "Order (${notificationByDateListOrder.fold(0, (previousValue, element) => previousValue + element.notifications.length)})"),
+                        child: Text("Order (${notificationByDateListOrder.fold(0, (previousValue, element) => previousValue + element.notifications.length)})"),
                       ),
                     ],
                   ),
@@ -144,12 +129,8 @@ class _NotificationListScreenState extends State<NotificationListScreen>
                                     alignment: Alignment.centerLeft,
                                     margin: EdgeInsets.only(bottom: 10),
                                     child: Text(
-                                      DateHelper.getFormattedDate(
-                                          notificationByDateListPromotion[index]
-                                              .date),
-                                      style: FluentTheme.of(context)
-                                          .typography
-                                          .subtitle,
+                                      DateHelper.getFormattedDate(notificationByDateListPromotion[index].date),
+                                      style: FluentTheme.of(context).typography.subtitle,
                                     ),
                                   );
                                 }
@@ -157,40 +138,41 @@ class _NotificationListScreenState extends State<NotificationListScreen>
                                 return ListView.builder(
                                     controller: scrollController,
                                     shrinkWrap: true,
-                                    itemCount:
-                                        notificationByDateListPromotion[index]
-                                            .notifications
-                                            .length,
+                                    itemCount: notificationByDateListPromotion[index].notifications.length,
                                     itemBuilder: (context, indexNotification) {
-                                      NotificationModel notification =
-                                          notificationByDateListPromotion[index]
-                                              .notifications[indexNotification];
+                                      NotificationModel notification = notificationByDateListPromotion[index].notifications[indexNotification];
                                       return Card(
+                                        padding: EdgeInsets.all(0),
                                         margin: EdgeInsets.only(bottom: 10),
                                         child: ListTile(
+                                          onPressed: () {
+                                            context.push<NotificationModel>('/notification/detail', extra: notification);
+                                          },
                                           leading: Container(
                                             height: 50,
                                             width: 50,
                                             child: Image.network(
                                               notification.photoUrl ?? '',
+                                              fit: BoxFit.cover,
+                                              height: 50,
+                                              width: 50,
+                                              errorBuilder: (context, error, stackTrace) {
+                                                return Container();
+                                              },
                                             ),
                                           ),
                                           title: Container(
                                             alignment: Alignment.centerLeft,
                                             child: Text(
                                               notification.title ?? '',
-                                              style: FluentTheme.of(context)
-                                                  .typography
-                                                  .subtitle,
+                                              style: FluentTheme.of(context).typography.subtitle,
                                             ),
                                           ),
                                           subtitle: Container(
                                             alignment: Alignment.centerLeft,
                                             child: Text(
                                               notification.body ?? '',
-                                              style: FluentTheme.of(context)
-                                                  .typography
-                                                  .body,
+                                              style: FluentTheme.of(context).typography.body,
                                             ),
                                           ),
                                         ),
@@ -205,45 +187,34 @@ class _NotificationListScreenState extends State<NotificationListScreen>
                               itemBuilder: (context, index) {
                                 return Column(
                                   children: [
-                                    for (NotificationByDate notificationByDate
-                                        in notificationByDateListOrder) ...[
+                                    for (NotificationByDate notificationByDate in notificationByDateListOrder) ...[
                                       Container(
                                         alignment: Alignment.centerLeft,
                                         margin: EdgeInsets.only(bottom: 10),
                                         child: Text(
-                                          DateHelper.getFormattedDate(
-                                              notificationByDate.date),
-                                          style: FluentTheme.of(context)
-                                              .typography
-                                              .subtitle,
+                                          DateHelper.getFormattedDate(notificationByDate.date),
+                                          style: FluentTheme.of(context).typography.subtitle,
                                         ),
                                       ),
-                                      for (NotificationModel notification
-                                          in notificationByDate
-                                              .notifications) ...[
+                                      for (NotificationModel notification in notificationByDate.notifications) ...[
                                         Card(
                                           padding: EdgeInsets.all(0),
                                           margin: EdgeInsets.only(bottom: 10),
                                           child: ListTile(
                                             onPressed: () {
-                                              context.push(
-                                                  '/orders/${DateHelper.getFormattedDate(notification.order_date!)}/${notification.orderId}');
+                                              context.push('/orders/${DateHelper.getFormattedDate(notification.order_date!)}/${notification.orderId}');
                                             },
                                             leading: Container(
                                               height: 50,
                                               width: 50,
-                                              decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  border: Border.all(width: 1)),
-                                              child: notification.type ==
-                                                      'INSERT'
+                                              decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(width: 1)),
+                                              child: notification.type == 'INSERT'
                                                   ? Icon(
                                                       FluentIcons.product_list,
                                                       size: 24,
                                                     )
                                                   : Icon(
-                                                      FluentIcons
-                                                          .product_release,
+                                                      FluentIcons.product_release,
                                                       size: 24,
                                                     ),
                                             ),
@@ -251,22 +222,17 @@ class _NotificationListScreenState extends State<NotificationListScreen>
                                               alignment: Alignment.centerLeft,
                                               child: Text(
                                                 notification.title ?? '',
-                                                style: FluentTheme.of(context)
-                                                    .typography
-                                                    .subtitle,
+                                                style: FluentTheme.of(context).typography.subtitle,
                                               ),
                                             ),
                                             subtitle: Container(
                                               alignment: Alignment.centerLeft,
                                               child: Text(
                                                 notification.body ?? '',
-                                                style: FluentTheme.of(context)
-                                                    .typography
-                                                    .body,
+                                                style: FluentTheme.of(context).typography.body,
                                               ),
                                             ),
-                                            trailing:
-                                                Icon(FluentIcons.chevron_right),
+                                            trailing: Icon(FluentIcons.chevron_right),
                                           ),
                                         ),
                                       ],

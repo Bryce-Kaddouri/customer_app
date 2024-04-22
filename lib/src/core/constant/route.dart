@@ -1,5 +1,7 @@
 import 'package:customer_app/src/core/constant/app_color.dart';
 import 'package:customer_app/src/feature/auth/presentation/screen/otp_screen.dart';
+import 'package:customer_app/src/feature/notification/data/model/notification_model.dart';
+import 'package:customer_app/src/feature/notification/presentation/screen/notification_detail_screen.dart';
 import 'package:customer_app/src/feature/reminder/presentation/screen/reminder_screen.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' hide IconButton, Button, ButtonStyle, Colors, ListTile, Card;
@@ -135,6 +137,15 @@ class RouterHelper {
             Map<String, dynamic>? extra = state.extra as Map<String, dynamic>?;
             return CalendarEventPage(
               extra: extra,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/notification/detail',
+          builder: (context, state) {
+            NotificationModel notification = state.extra as NotificationModel;
+            return NotificationDetailScreen(
+              notification: notification,
             );
           },
         ),
