@@ -1,7 +1,6 @@
 /*
 import 'package:add_2_calendar/add_2_calendar.dart';
 */
-import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:go_router/go_router.dart';
@@ -52,6 +51,7 @@ class OrderDetailScreen extends StatelessWidget {
           if (snapshot.hasData) {
             print(snapshot.data);
             OrderModel orderModel = snapshot.data!;
+            print(orderModel.status.toJson());
 
             return Container(
               width: MediaQuery.of(context).size.width,
@@ -66,18 +66,15 @@ class OrderDetailScreen extends StatelessWidget {
                           Expanded(
                             child: Row(
                               children: [
-                                Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    // rounded rectanmgle
-                                    shape: BoxShape.rectangle,
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.blue,
-                                  ),
-                                  child: Icon(
-                                    FluentIcons.event_date,
-                                    size: 24,
+                                Card(
+                                  padding: EdgeInsets.all(0),
+                                  child: Container(
+                                    height: 40,
+                                    width: 40,
+                                    child: Icon(
+                                      FluentIcons.event_date,
+                                      size: 24,
+                                    ),
                                   ),
                                 ),
                                 SizedBox(
@@ -92,18 +89,15 @@ class OrderDetailScreen extends StatelessWidget {
                           Expanded(
                             child: Row(
                               children: [
-                                Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    // rounded rectanmgle
-                                    shape: BoxShape.rectangle,
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.blue,
-                                  ),
-                                  child: Icon(
-                                    FluentIcons.clock,
-                                    size: 24,
+                                Card(
+                                  padding: EdgeInsets.all(0),
+                                  child: Container(
+                                    height: 40,
+                                    width: 40,
+                                    child: Icon(
+                                      FluentIcons.clock,
+                                      size: 24,
+                                    ),
                                   ),
                                 ),
                                 SizedBox(
@@ -125,18 +119,15 @@ class OrderDetailScreen extends StatelessWidget {
                           Expanded(
                             child: Row(
                               children: [
-                                Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    // rounded rectanmgle
-                                    shape: BoxShape.rectangle,
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.blue,
-                                  ),
-                                  child: Icon(
-                                    FluentIcons.contact,
-                                    size: 24,
+                                Card(
+                                  padding: EdgeInsets.all(0),
+                                  child: Container(
+                                    height: 40,
+                                    width: 40,
+                                    child: Icon(
+                                      FluentIcons.contact,
+                                      size: 24,
+                                    ),
                                   ),
                                 ),
                                 SizedBox(
@@ -151,18 +142,21 @@ class OrderDetailScreen extends StatelessWidget {
                           Expanded(
                             child: Row(
                               children: [
-                                Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
+                                Card(
+                                  padding: EdgeInsets.all(0),
+                                  child: Container(
+                                    height: 40,
+                                    width: 40,
+                                    /* decoration: BoxDecoration(
                                     // rounded rectanmgle
                                     shape: BoxShape.rectangle,
                                     borderRadius: BorderRadius.circular(10),
-                                    color: Colors.blue,
-                                  ),
-                                  child: Icon(
-                                    FluentIcons.phone,
-                                    size: 24,
+                                    color: FluentTheme.of(context).scaffoldBackgroundColor,
+                                  ),*/
+                                    child: Icon(
+                                      FluentIcons.phone,
+                                      size: 24,
+                                    ),
                                   ),
                                 ),
                                 SizedBox(
@@ -182,18 +176,15 @@ class OrderDetailScreen extends StatelessWidget {
                           Expanded(
                             child: Row(
                               children: [
-                                Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    // rounded rectanmgle
-                                    shape: BoxShape.rectangle,
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.blue,
-                                  ),
-                                  child: Icon(
-                                    FluentIcons.circle_dollar,
-                                    size: 24,
+                                Card(
+                                  padding: EdgeInsets.all(0),
+                                  child: Container(
+                                    height: 40,
+                                    width: 40,
+                                    child: Icon(
+                                      FluentIcons.circle_dollar,
+                                      size: 24,
+                                    ),
                                   ),
                                 ),
                                 SizedBox(
@@ -277,68 +268,302 @@ class OrderDetailScreen extends StatelessWidget {
                               ));
                         }),
                       ),
-                    ],
-                  )),
-                  /*Container(
-                    padding: EdgeInsets.all(10),
-                    child: Card(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Total Amount'),
-                          Text(PriceHelper.getFormattedPrice(orderModel.totalAmount)),
-                        ],
+                      SizedBox(
+                        height: 24,
                       ),
-                    ),
-                  )*/
-
-                  Card(
-                    child: Column(
-                      children: [
-                        Row(
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Progress', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Card(
+                        child: Column(
                           children: [
+                            Row(
+                              children: [
+                                Container(
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.green.lighter,
+                                  ),
+                                  height: 40,
+                                  width: 40,
+                                  child: Icon(FluentIcons.check_mark, color: Colors.white, size: 24),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Container(
+                                  child: StatusWidget(status: 'pending'),
+                                ),
+                              ],
+                            ),
                             Container(
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.blue,
+                              width: double.infinity,
+                              height: 44,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 40,
+                                    child: Column(
+                                      children: List.generate(
+                                        orderModel.status.step > 1 ? 1 : 11,
+                                        (index) => Container(
+                                          alignment: Alignment.centerLeft,
+                                          height: orderModel.status.step > 1 ? 44 : 4,
+                                          width: 2,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: orderModel.status.step > 1
+                                                  ? Colors.green.lighter
+                                                  : index.isEven
+                                                      ? index < 6
+                                                          ? Colors.green.lighter
+                                                          : Colors.grey[30]
+                                                      : Colors.transparent,
+                                            ),
+                                            height: 44,
+                                            width: 2,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text('${DateHelper.getFormattedDate(orderModel.createdAt)} at ${DateHelper.get24HourTime(material.TimeOfDay(hour: orderModel.createdAt.hour, minute: orderModel.createdAt.minute))}'),
+                                ],
                               ),
-                              height: 40,
-                              width: 40,
-                              child: Text("1"),
                             ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                              child: StatusWidget(status: 'pending'),
-                            ),
+                            if (orderModel.status.step >= 1)
+                              Row(
+                                children: [
+                                  if (orderModel.status.step <= 1)
+                                    Container(
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.grey[30],
+                                      ),
+                                      height: 40,
+                                      width: 40,
+                                      child: Text("2", style: FluentTheme.of(context).typography.subtitle!.copyWith(color: Colors.grey[100])),
+                                    )
+                                  else
+                                    Container(
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.green.lighter,
+                                      ),
+                                      height: 40,
+                                      width: 40,
+                                      child: Icon(FluentIcons.check_mark, color: Colors.white, size: 24),
+                                    ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Container(
+                                    child: StatusWidget(status: 'inProgress'),
+                                  ),
+                                ],
+                              ),
+                            if (orderModel.status.step > 1)
+                              Container(
+                                width: double.infinity,
+                                height: 44,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      child: Column(
+                                        children: List.generate(
+                                          orderModel.status.step > 2 ? 1 : 11,
+                                          (index) => Container(
+                                            alignment: Alignment.centerLeft,
+                                            height: orderModel.status.step > 2 ? 44 : 4,
+                                            width: 2,
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: orderModel.status.step > 2
+                                                    ? Colors.green.lighter
+                                                    : index.isEven
+                                                        ? index < 6
+                                                            ? Colors.green.lighter
+                                                            : Colors.grey[30]
+                                                        : Colors.transparent,
+                                              ),
+                                              height: 44,
+                                              width: 2,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text('${DateHelper.getFormattedDate(orderModel.createdAt)} at ${DateHelper.get24HourTime(material.TimeOfDay(hour: orderModel.createdAt.hour, minute: orderModel.createdAt.minute))}'),
+                                  ],
+                                ),
+                              ),
+                            if (orderModel.status.step >= 2)
+                              Row(
+                                children: [
+                                  if (orderModel.status.step <= 2)
+                                    Container(
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.grey[30],
+                                      ),
+                                      height: 40,
+                                      width: 40,
+                                      child: Text("3", style: FluentTheme.of(context).typography.subtitle!.copyWith(color: Colors.grey[100])),
+                                    )
+                                  else
+                                    Container(
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.green.lighter,
+                                      ),
+                                      height: 40,
+                                      width: 40,
+                                      child: Icon(FluentIcons.check_mark, color: Colors.white, size: 24),
+                                    ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Container(
+                                    child: StatusWidget(status: 'completed'),
+                                  ),
+                                ],
+                              ),
+                            if (orderModel.status.step >= 3)
+                              Container(
+                                width: double.infinity,
+                                height: 44,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      child: Column(
+                                        children: List.generate(
+                                          orderModel.status.step > 3 ? 1 : 11,
+                                          (index) => Container(
+                                            alignment: Alignment.centerLeft,
+                                            height: orderModel.status.step > 3 ? 44 : 4,
+                                            width: 2,
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: orderModel.status.step > 3
+                                                    ? Colors.green.lighter
+                                                    : index.isEven
+                                                        ? index < 6
+                                                            ? Colors.green.lighter
+                                                            : Colors.grey[30]
+                                                        : Colors.transparent,
+                                              ),
+                                              height: 44,
+                                              width: 2,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text('${DateHelper.getFormattedDate(orderModel.createdAt)} at ${DateHelper.get24HourTime(material.TimeOfDay(hour: orderModel.createdAt.hour, minute: orderModel.createdAt.minute))}'),
+                                  ],
+                                ),
+                              ),
+                            if (orderModel.status.step >= 3)
+                              Row(
+                                children: [
+                                  if (orderModel.status.step < 4)
+                                    Container(
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey[30]),
+                                      height: 40,
+                                      width: 40,
+                                      child: Text("4", style: FluentTheme.of(context).typography.subtitle!.copyWith(color: Colors.grey[100])),
+                                    )
+                                  else
+                                    Container(
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.green.lighter,
+                                      ),
+                                      height: 40,
+                                      width: 40,
+                                      child: Icon(FluentIcons.check_mark, color: Colors.white, size: 24),
+                                    ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Container(
+                                    child: StatusWidget(status: 'collected'),
+                                  ),
+                                ],
+                              ),
+                            if (orderModel.status.step > 3)
+                              Container(
+                                padding: EdgeInsets.only(left: 19),
+                                width: double.infinity,
+                                height: 40,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 30,
+                                      child: Container(
+                                        alignment: Alignment.centerLeft,
+                                        height: 50,
+                                        width: 2,
+                                        child: Container(
+                                          height: 50,
+                                          width: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text('${DateHelper.getFormattedDate(orderModel.collectedAt!)} at ${DateHelper.get24HourTime(material.TimeOfDay(hour: orderModel.collectedAt!.hour, minute: orderModel.collectedAt!.minute))}'),
+                                  ],
+                                ),
+                              ),
                           ],
                         ),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          padding: EdgeInsets.only(left: 19),
-                          width: double.infinity,
-                          height: 40,
-                          child: Row(
-                            children: [
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                ),
-                                height: 50,
-                                width: 2,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                      ),
+                    ],
+                  )),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 60,
+                    child: Card(
+                      padding: EdgeInsets.all(5),
+                      child: FilledButton(
+                        child: Text('Add To Calendar'),
+                        onPressed: () async {
+                          context.push(
+                            '/reminder/add',
+                            extra: {
+                              'order_id': '${orderModel.id}',
+                              'order_date': '${orderModel.date}',
+                              'order_time': '${orderModel.time.hour}:${orderModel.time.minute}',
+                            },
+                          );
+                        },
+                      ),
                     ),
-                  )
+                  ),
                 ],
               ),
             );
@@ -349,54 +574,6 @@ class OrderDetailScreen extends StatelessWidget {
           }
         },
       ),
-      persistentFooterButtons: [
-        Container(
-          width: MediaQuery.of(context).size.width,
-          height: 50,
-          child: Card(
-            padding: EdgeInsets.all(0),
-            child: FilledButton(
-              child: Text('Add To Calendar'),
-              onPressed: () async {
-                print('Add to calendar');
-                final Event event = Event(
-                  title: 'Event title',
-                  description: 'Event description',
-                  location: 'Event location',
-                  startDate: DateTime.now(),
-                  endDate: DateTime.now(),
-                  iosParams: IOSParams(
-                    reminder: Duration(/* Ex. hours:1 */), // on iOS, you can set alarm notification after your event.
-                    url: 'https://www.example.com', // on iOS, you can set url to your event.
-                  ),
-                  androidParams: AndroidParams(
-                    emailInvites: [], // on Android, you can add invite emails to your event.
-                  ),
-                );
-
-                Add2Calendar.addEvent2Cal(event);
-                /*final Event event = Event(
-                  title: 'Event title',
-                  description: 'Event description',
-                  location: 'Event location',
-                  startDate: DateTime.now(),
-                  endDate: DateTime.now(),
-                  iosParams: IOSParams(
-                    reminder: Duration(*/ /* Ex. hours:1 */ /*), // on iOS, you can set alarm notification after your event.
-                    url: 'https://www.example.com', // on iOS, you can set url to your event.
-                  ),
-                  androidParams: AndroidParams(
-                    emailInvites: [], // on Android, you can add invite emails to your event.
-                  ),
-                );
-
-                bool res = await Add2Calendar.addEvent2Cal(event);
-                print(res);*/
-              },
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

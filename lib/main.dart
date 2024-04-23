@@ -444,6 +444,9 @@ class _MyAppState extends State<MyApp> {
       routerDelegate: router!.routerDelegate,
       routeInformationParser: router!.routeInformationParser,
       routeInformationProvider: router!.routeInformationProvider,
+      theme: fluent.FluentThemeData.light(),
+      darkTheme: fluent.FluentThemeData.dark(),
+      themeMode: ThemeMode.dark,
       /* initialRoute: initialRoute,
       routes: <String, WidgetBuilder>{HomePage.routeName: (_) => HomePage(notificationAppLaunchDetails), SecondPage.routeName: (_) => SecondPage(selectedNotificationPayload)},*/
     );

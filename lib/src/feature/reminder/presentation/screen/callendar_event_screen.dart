@@ -621,7 +621,7 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                               Padding(
                                 padding: const EdgeInsets.all(10.0),
                                 child: fluent.InfoLabel(
-                                  label: 'To:',
+                                  label: 'From:',
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -897,8 +897,38 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                   var createEventResult = await _deviceCalendarPlugin.createOrUpdateEvent(_event);
                   if (createEventResult?.isSuccess == true) {
                     if (context.canPop()) {
+                      fluent.displayInfoBar(
+                        context,
+                        builder: (BuildContext context, void Function() close) {
+                          return fluent.InfoBar(
+                            title: Text('Success'),
+                            content: Text('Event saved successfully'),
+                            action: fluent.IconButton(
+                              icon: const Icon(Icons.close),
+                              onPressed: close,
+                            ),
+                            severity: fluent.InfoBarSeverity.success,
+                          );
+                        },
+                        alignment: Alignment.topRight,
+                      );
                       context.pop(true);
                     } else {
+                      fluent.displayInfoBar(
+                        context,
+                        builder: (BuildContext context, void Function() close) {
+                          return fluent.InfoBar(
+                            title: Text('Success'),
+                            content: Text('Event saved successfully'),
+                            action: fluent.IconButton(
+                              icon: const Icon(Icons.close),
+                              onPressed: close,
+                            ),
+                            severity: fluent.InfoBarSeverity.success,
+                          );
+                        },
+                        alignment: Alignment.topRight,
+                      );
                       context.go('/reminder');
                     }
                   } else {
