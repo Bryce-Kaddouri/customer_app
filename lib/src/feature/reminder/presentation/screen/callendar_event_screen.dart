@@ -671,13 +671,16 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                 padding: const EdgeInsets.all(10.0),
                                 child: fluent.InfoLabel(
                                   label: 'Title:',
-                                  child: fluent.TextFormBox(
-                                    key: const Key('titleField'),
-                                    initialValue: _event?.title,
-                                    validator: _validateTitle,
-                                    onSaved: (String? value) {
-                                      _event?.title = value;
-                                    },
+                                  child: fluent.Container(
+                                    constraints: const BoxConstraints(minHeight: 50),
+                                    child: fluent.TextFormBox(
+                                      key: const Key('titleField'),
+                                      initialValue: _event?.title,
+                                      validator: _validateTitle,
+                                      onSaved: (String? value) {
+                                        _event?.title = value;
+                                      },
+                                    ),
                                   ),
                                 )),
                             Padding(
@@ -714,7 +717,7 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                   label: 'From:',
                                   child: fluent.Column(
                                     children: [
-                                      /*fluent.DatePicker(
+                                      fluent.DatePicker(
                                         key: const Key('fromDatePicker'),
                                         selected: _startDate!.toLocal(),
                                         fieldFlex: const [2, 3, 2],
@@ -727,125 +730,9 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                             }
                                           });
                                         },
-                                      ),*/
-                                      fluent.TextFormBox(
-                                        autovalidateMode: AutovalidateMode.always,
-                                        // digitsOnly: true,
-                                        placeholder: 'yyyy-mm-dd',
-
-                                        keyboardType: TextInputType.numberWithOptions(),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter a date';
-                                          }
-                                          // check format with regexp
-                                          else if (!RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(value)) {
-                                            return 'Please enter a valid date';
-                                          }
-                                          return null;
-                                        },
-
-                                        inputFormatters: [
-                                          dateInputFormatter,
-
-                                          // only digit and auto format with 2024-11-12 with regexp
-                                          /*TextInputFormatter.withFunction((oldValue, newValue) {
-                                            if (oldValue.text.length < newValue.text.length) {
-                                              if (newValue.text.length == 4) {
-                                                return TextEditingValue(
-                                                  text: '${oldValue.text}-',
-                                                  selection: TextSelection.collapsed(offset: -1),
-                                                );
-                                              } else if (newValue.text.length == 7) {
-                                                return TextEditingValue(
-                                                  text: '${oldValue.text}-',
-                                                  selection: TextSelection.collapsed(offset: newValue.selection.end + 1),
-                                                );
-                                              }
-                                            }
-
-                                            */ /*if (newValue.text.length == 4 || newValue.text.length == 7) {
-                                              return TextEditingValue(
-                                                text: '${oldValue.text}-${newValue.text}',
-                                                selection: TextSelection.collapsed(offset: newValue.selection.end + 1),
-                                              );
-                                            }*/ /*
-                                            return newValue;
-                                          }),*/
-                                        ],
-                                        controller: _fromDateController,
-                                        suffix: fluent.IconButton(
-                                          icon: const Icon(Icons.calendar_today),
-                                          onPressed: () async {
-                                            DateTime? selectDate = await fluent.showDialog<DateTime?>(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return fluent.ContentDialog(
-                                                  title: Text('Select Date'),
-                                                  content: Card(
-                                                    elevation: 0,
-                                                    child: CalendarDatePicker(
-                                                      initialDate: _startDate!.toLocal(),
-                                                      firstDate: DateTime.now().subtract(const Duration(days: 365)),
-                                                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                                                      onDateChanged: (DateTime date) {
-                                                        setState(() {
-                                                          var currentLocation = timeZoneDatabase.locations[_timezone];
-                                                          if (currentLocation != null) {
-                                                            _startDate = TZDateTime.from(date, currentLocation);
-                                                            _event?.start = _combineDateWithTime(_startDate, _startTime);
-                                                          }
-                                                        });
-                                                      },
-                                                    ),
-                                                  ),
-                                                  actions: [
-                                                    fluent.FilledButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(context, _startDate);
-                                                      },
-                                                      child: const Text('Confirm'),
-                                                    ),
-                                                    fluent.Button(
-                                                      onPressed: () {
-                                                        Navigator.pop(context, null);
-                                                      },
-                                                      child: const Text('Cancel'),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-
-                                            if (selectDate != null) {
-                                              print('selectDate: $selectDate');
-                                              setState(() {
-                                                var currentLocation = timeZoneDatabase.locations[_timezone];
-                                                if (currentLocation != null) {
-                                                  _startDate = TZDateTime.from(selectDate, currentLocation);
-                                                  _event?.start = _combineDateWithTime(_startDate, _startTime);
-                                                }
-                                                _fromDateController.text = DateFormat('yyyy-MM-dd').format(selectDate);
-                                              });
-                                            }
-                                          },
-                                        ),
-                                        key: const Key('fromDatePicker'),
-                                        onChanged: (String value) {
-                                          DateTime? date = DateTime.tryParse(value);
-                                          if (date != null) {
-                                            setState(() {
-                                              var currentLocation = timeZoneDatabase.locations[_timezone];
-                                              if (currentLocation != null) {
-                                                _startDate = TZDateTime.from(date, currentLocation);
-                                                _event?.start = _combineDateWithTime(_startDate, _startTime);
-                                              }
-                                            });
-                                          }
-                                        },
                                       ),
                                       SizedBox(height: 10),
-                                      /*fluent.TimePicker(
+                                      fluent.TimePicker(
                                         hourFormat: HourFormat.HH,
                                         key: const Key('fromTimePicker'),
                                         selected: _startDate!.copyWith(hour: _startTime!.hour, minute: _startTime!.minute).toLocal(),
@@ -855,136 +742,12 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                             _event?.start = _combineDateWithTime(_startDate, _startTime);
                                           });
                                         },
-                                      ),*/
-
-                                      fluent.TextFormBox(
-                                        autovalidateMode: AutovalidateMode.always,
-                                        // digitsOnly: true,
-                                        placeholder: 'HH:mm',
-
-                                        keyboardType: TextInputType.numberWithOptions(),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter a time';
-                                          }
-                                          // check format with regexp
-                                          else if (!RegExp(r'^\d{2}:\d{2}$').hasMatch(value)) {
-                                            return 'Please enter a valid time';
-                                          }
-                                          return null;
-                                        },
-
-                                        inputFormatters: [
-                                          timeInputFormatter,
-                                        ],
-                                        controller: TextEditingController(text: '${_startTime!.hour}:${_startTime!.minute}'),
-                                        suffix: fluent.IconButton(
-                                          icon: const Icon(Icons.access_time),
-                                          onPressed: () async {
-                                            FocusNode hourFocus = FocusNode();
-                                            FocusNode minuteFocus = FocusNode();
-                                            final TextEditingController hourController = TextEditingController(text: _startTime!.hour.toString());
-                                            final TextEditingController minuteController = TextEditingController(text: _startTime!.minute.toString());
-                                            TimeOfDay? selectTime = await fluent.showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return fluent.ContentDialog(
-                                                  title: Text('Select Time'),
-                                                  content: Container(
-                                                    height: 40,
-                                                    child: Row(
-                                                      children: [
-                                                        Expanded(
-                                                            child: Container(
-                                                          height: 32,
-                                                          child: fluent.NumberBox(
-                                                            autofocus: true,
-                                                            textAlign: TextAlign.center,
-                                                            mode: fluent.SpinButtonPlacementMode.none,
-                                                            key: const Key('hourBox'),
-                                                            value: hourController.text.isNotEmpty ? int.parse(hourController.text) : _startTime!.hour,
-                                                            onChanged: (int? value) {
-                                                              if (value != null) {
-                                                                hourController.text = value.toString();
-                                                                if (hourController.text.length == 2) {
-                                                                  FocusScope.of(context).requestFocus(minuteFocus);
-                                                                }
-                                                              }
-                                                            },
-                                                            min: 0,
-                                                            max: 23,
-                                                            focusNode: hourFocus,
-                                                          ),
-                                                        )),
-                                                        const Text(':'),
-                                                        Expanded(
-                                                          child: fluent.NumberBox(
-                                                            key: const Key('minuteBox'),
-                                                            value: minuteController.text.isNotEmpty ? int.parse(minuteController.text) : _startTime!.minute,
-                                                            onChanged: (int? value) {
-                                                              if (value != null) {
-                                                                minuteController.text = value.toString();
-                                                                if (minuteController.text.length == 2) {
-                                                                  Navigator.pop(context, TimeOfDay(hour: int.parse(hourController.text), minute: int.parse(minuteController.text)));
-                                                                }
-                                                              }
-                                                            },
-                                                            min: 0,
-                                                            max: 59,
-                                                            focusNode: minuteFocus,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  actions: [
-                                                    fluent.FilledButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(context, _startTime);
-                                                      },
-                                                      child: const Text('Confirm'),
-                                                    ),
-                                                    fluent.Button(
-                                                      onPressed: () {
-                                                        Navigator.pop(context, null);
-                                                      },
-                                                      child: const Text('Cancel'),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                        ),
-                                        key: const Key('fromTimePicker'),
-                                        onChanged: (String value) {
-                                          List<String> time = value.split(':');
-                                          if (time.length == 2) {
-                                            setState(() {
-                                              _startTime = TimeOfDay(hour: int.parse(time[0]), minute: int.parse(time[1]));
-                                              _event?.start = _combineDateWithTime(_startDate, _startTime);
-                                            });
-                                          }
-                                        },
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-                            if ((_event?.allDay == false) && Platform.isAndroid)
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: fluent.InfoLabel(
-                                  label: 'Start date time zone:',
-                                  child: fluent.TextFormBox(
-                                    key: const Key('startDateTimeZoneField'),
-                                    initialValue: _event?.start?.location.name,
-                                    onSaved: (String? value) {
-                                      _event?.updateStartLocation(value);
-                                    },
-                                  ),
-                                ),
-                              ),
+
                             // Only add the 'To' Date for non-allDay events on all
                             // platforms except Android (which allows multiple-day allDay events)
                             if (_event?.allDay == false || Platform.isAndroid)
@@ -994,22 +757,19 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                   label: 'To:',
                                   child: fluent.Column(
                                     children: [
-                                      Container(
-                                        width: double.infinity,
-                                        child: fluent.DatePicker(
-                                          key: const Key('toDatePicker'),
-                                          selected: _endDate!.toLocal(),
-                                          fieldFlex: const [2, 3, 2],
-                                          onChanged: (DateTime date) {
-                                            setState(() {
-                                              var currentLocation = timeZoneDatabase.locations[_timezone];
-                                              if (currentLocation != null) {
-                                                _endDate = TZDateTime.from(date, currentLocation);
-                                                _event?.end = _combineDateWithTime(_endDate, _endTime);
-                                              }
-                                            });
-                                          },
-                                        ),
+                                      fluent.DatePicker(
+                                        key: const Key('toDatePicker'),
+                                        selected: _endDate!.toLocal(),
+                                        fieldFlex: const [2, 3, 2],
+                                        onChanged: (DateTime date) {
+                                          setState(() {
+                                            var currentLocation = timeZoneDatabase.locations[_timezone];
+                                            if (currentLocation != null) {
+                                              _endDate = TZDateTime.from(date, currentLocation);
+                                              _event?.end = _combineDateWithTime(_endDate, _endTime);
+                                            }
+                                          });
+                                        },
                                       ),
                                       SizedBox(height: 10),
                                       fluent.TimePicker(
@@ -1027,19 +787,77 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                   ),
                                 ),
                               ),
-                            if (_event?.allDay == false && Platform.isAndroid)
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: fluent.InfoLabel(
-                                  label: 'End date time zone:',
-                                  child: fluent.TextFormBox(
-                                    key: const Key('endDateTimeZoneField'),
-                                    initialValue: _event?.end?.location.name,
-                                    onSaved: (String? value) => _event?.updateEndLocation(value),
-                                  ),
+
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: fluent.InfoLabel(
+                                label: 'Reminders:',
+                                child: fluent.Column(
+                                  children: [
+                                    fluent.Card(
+                                      padding: const EdgeInsets.all(0),
+                                      child: fluent.ListTile(
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                                        trailing: fluent.IconButton(
+                                          icon: Container(
+                                            height: 24,
+                                            width: 24,
+                                            decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: const Icon(Icons.remove, color: Colors.white, size: 24),
+                                          ),
+                                          onPressed: () async {},
+                                        ),
+                                        title: fluent.Padding(
+                                          padding: const EdgeInsets.only(bottom: 10),
+                                          child: fluent.DatePicker(
+                                            key: const Key('reminderDatePicker'),
+                                            selected: _startDate!.toLocal(),
+                                            fieldFlex: const [2, 3, 2],
+                                            onChanged: (DateTime date) {
+                                              setState(() {
+                                                var currentLocation = timeZoneDatabase.locations[_timezone];
+                                                if (currentLocation != null) {
+                                                  _startDate = TZDateTime.from(date, currentLocation);
+                                                  _event?.start = _combineDateWithTime(_startDate, _startTime);
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        subtitle: fluent.TimePicker(
+                                          hourFormat: HourFormat.HH,
+                                          key: const Key('reminderTimePicker'),
+                                          selected: _startDate!.copyWith(hour: _startTime!.hour, minute: _startTime!.minute).toLocal(),
+                                          onChanged: (DateTime time) {
+                                            setState(() {
+                                              _startTime = TimeOfDay(hour: time.hour, minute: time.minute);
+                                              _event?.start = _combineDateWithTime(_startDate, _startTime);
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: double.infinity,
+                                      child: fluent.Button(
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(fluent.FluentIcons.alarm_clock),
+                                            SizedBox(width: 10),
+                                            const Text('Add reminders'),
+                                          ],
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
-
+                            ),
                             GestureDetector(
                               onTap: () async {
                                 var result = await Navigator.push(context, MaterialPageRoute(builder: (context) => EventRemindersPage()));
