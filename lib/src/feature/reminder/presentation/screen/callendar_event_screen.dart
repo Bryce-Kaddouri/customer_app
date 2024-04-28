@@ -370,6 +370,8 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
   TZDateTime? _endDate;
   TimeOfDay? _endTime;
 
+  List<DateTime> lstDateTimeReminders = [];
+
   AutovalidateMode _autovalidate = AutovalidateMode.disabled;
   DayOfWeekGroup? _dayOfWeekGroup = DayOfWeekGroup.None;
 
@@ -391,7 +393,8 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
 
   List<Attendee> _attendees = [];
   List<Reminder> _reminders = [];
-  String _timezone = 'Etc/UTC';
+  List<DateTime> _dateReminders = [];
+  String _timezone = 'Europe/Dublin';
 
   final timeInputFormatter = TextInputFormatter.withFunction((oldValue, newValue) {
     // Remove any character that is not a digit
@@ -613,6 +616,7 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
     setState(() {
       _isLoading = false;
     });
+
     Calendar? cal = await ReminderScreen.retrieveCalendar(context);
     if (cal != null) {
       setState(() {
@@ -794,47 +798,58 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                 label: 'Reminders:',
                                 child: fluent.Column(
                                   children: [
-                                    fluent.Card(
-                                      padding: const EdgeInsets.all(0),
-                                      child: fluent.ListTile(
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                                        trailing: fluent.IconButton(
-                                          icon: Container(
-                                            alignment: Alignment.center,
-                                            child: const Icon(Icons.delete, color: Colors.red, size: 32),
-                                          ),
-                                          onPressed: () async {},
-                                        ),
-                                        title: fluent.Padding(
-                                          padding: const EdgeInsets.only(bottom: 10),
-                                          child: fluent.DatePicker(
-                                            key: const Key('reminderDatePicker'),
-                                            selected: _startDate!.toLocal(),
-                                            fieldFlex: const [2, 3, 2],
-                                            onChanged: (DateTime date) {
-                                              setState(() {
-                                                var currentLocation = timeZoneDatabase.locations[_timezone];
-                                                if (currentLocation != null) {
-                                                  _startDate = TZDateTime.from(date, currentLocation);
-                                                  _event?.start = _combineDateWithTime(_startDate, _startTime);
-                                                }
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                        subtitle: fluent.TimePicker(
-                                          hourFormat: HourFormat.HH,
-                                          key: const Key('reminderTimePicker'),
-                                          selected: _startDate!.copyWith(hour: _startTime!.hour, minute: _startTime!.minute).toLocal(),
-                                          onChanged: (DateTime time) {
-                                            setState(() {
-                                              _startTime = TimeOfDay(hour: time.hour, minute: time.minute);
-                                              _event?.start = _combineDateWithTime(_startDate, _startTime);
-                                            });
-                                          },
-                                        ),
+                                    if (_reminders.isNotEmpty)
+                                      fluent.Column(
+                                        children: [
+                                          for (var i = 0; i < _reminders!.length; i++)
+                                            fluent.Card(
+                                              margin: fluent.EdgeInsets.all(5),
+                                              padding: const EdgeInsets.all(0),
+                                              child: fluent.ListTile(
+                                                contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                                                trailing: fluent.IconButton(
+                                                  icon: Container(
+                                                    alignment: Alignment.center,
+                                                    child: const Icon(Icons.delete, color: Colors.red, size: 32),
+                                                  ),
+                                                  onPressed: () async {
+                                                    setState(() {
+                                                      _reminders.remove(_reminders[i]);
+                                                    });
+                                                  },
+                                                ),
+                                                title: fluent.Padding(
+                                                  padding: const EdgeInsets.only(bottom: 10),
+                                                  child: fluent.DatePicker(
+                                                    key: const Key('reminderDatePicker'),
+                                                    selected: _dateReminders[i].subtract(Duration(minutes: _reminders[i].minutes!)),
+                                                    endDate: _endDate!.toLocal(),
+                                                    fieldFlex: const [2, 3, 2],
+                                                    onChanged: (DateTime date) {
+                                                      setState(() {
+                                                        _dateReminders[i] = date;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                                subtitle: fluent.TimePicker(
+                                                  hourFormat: HourFormat.HH,
+                                                  key: const Key('reminderTimePicker'),
+                                                  selected: _dateReminders[i],
+                                                  onChanged: (DateTime time) {
+                                                    setState(() {
+                                                      _dateReminders[i] = time;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            )
+                                        ],
+                                      )
+                                    else
+                                      Container(
+                                        child: Text('No Reminders, you can add it by click on the button just below'),
                                       ),
-                                    ),
                                     SizedBox(height: 30),
                                     Container(
                                       width: double.infinity,
@@ -849,33 +864,14 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                         ),
                                         onPressed: () {
                                           setState(() {
-                                            int minutes = _startDate!.difference(_event!.start!.toLocal()).inMinutes;
+                                            int minutes = 60;
+                                            _dateReminders.add(_event!.start!.toLocal());
                                             _reminders.add(Reminder(minutes: minutes));
                                           });
                                         },
                                       ),
                                     )
                                   ],
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () async {
-                                var result = await Navigator.push(context, MaterialPageRoute(builder: (context) => EventRemindersPage()));
-                                if (result == null) {
-                                  return;
-                                }
-                                _reminders = result;
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Wrap(
-                                    crossAxisAlignment: WrapCrossAlignment.center,
-                                    spacing: 10.0,
-                                    children: [const Icon(Icons.alarm), if (_reminders.isEmpty) Text(_calendar!.isReadOnly == false ? 'Add reminders' : 'Reminders'), for (var reminder in _reminders) Text('${reminder.minutes} minutes before; ')],
-                                  ),
                                 ),
                               ),
                             ),
@@ -1021,6 +1017,7 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                   _event?.reminders = _reminders;
                   _event?.availability = _availability;
                   _event?.status = _eventStatus;
+                  _event?.reminders = _reminders;
                   var createEventResult = await _deviceCalendarPlugin.createOrUpdateEvent(_event);
                   if (createEventResult?.isSuccess == true) {
                     if (context.canPop()) {
