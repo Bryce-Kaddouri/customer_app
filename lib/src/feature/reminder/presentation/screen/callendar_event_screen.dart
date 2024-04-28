@@ -649,7 +649,11 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
         centerTitle: true,
         leading: BackButton(
           onPressed: () {
-            context.pop();
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/reminder');
+            }
           },
         ),
         title: Text(_event?.eventId?.isEmpty ?? true
@@ -798,7 +802,7 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                 label: 'Reminders:',
                                 child: fluent.Column(
                                   children: [
-                                    if (_reminders.isNotEmpty)
+                                    if (_event != null && _event!.reminders != null && _event!.reminders!.isNotEmpty)
                                       fluent.Column(
                                         children: [
                                           for (var i = 0; i < _reminders!.length; i++)
@@ -876,7 +880,7 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                               ),
                             ),
 
-                            if (_event != null && _event!.reminders != null && _event!.reminders!.isNotEmpty)
+                            /*if (_event != null && _event!.reminders != null && _event!.reminders!.isNotEmpty)
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 child: fluent.Column(
@@ -908,7 +912,7 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                     ),
                                   ],
                                 ),
-                              ),
+                              ),*/
                           ],
                         ),
                       ),

@@ -204,8 +204,6 @@ class _OrderScreenState extends State<OrderScreen> with AutomaticKeepAliveClient
   void streamInit() async {
     selectNotificationStream.stream.listen((String? payload) async {
       print('selectNotificationStream: $payload');
-
-      context.push('/second/$payload');
     }); // listen to message when app is in foreground
   }
 
