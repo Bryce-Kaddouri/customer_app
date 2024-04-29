@@ -800,13 +800,8 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                         contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
                                         trailing: fluent.IconButton(
                                           icon: Container(
-                                            height: 24,
-                                            width: 24,
-                                            decoration: BoxDecoration(
-                                              color: Colors.red,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: const Icon(Icons.remove, color: Colors.white, size: 24),
+                                            alignment: Alignment.center,
+                                            child: const Icon(Icons.delete, color: Colors.red, size: 32),
                                           ),
                                           onPressed: () async {},
                                         ),
@@ -840,6 +835,7 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                         ),
                                       ),
                                     ),
+                                    SizedBox(height: 30),
                                     Container(
                                       width: double.infinity,
                                       child: fluent.Button(
@@ -851,7 +847,12 @@ class _CalendarEventPageState extends State<CalendarEventPage> {
                                             const Text('Add reminders'),
                                           ],
                                         ),
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          setState(() {
+                                            int minutes = _startDate!.difference(_event!.start!.toLocal()).inMinutes;
+                                            _reminders.add(Reminder(minutes: minutes));
+                                          });
+                                        },
                                       ),
                                     )
                                   ],
