@@ -97,6 +97,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.1"
+  country_calling_code_picker:
+    dependency: "direct main"
+    description:
+      name: country_calling_code_picker
+      sha256: b9afd68e79f38953c463e8ea104533c1b9fc7b37e0948b501f9a7ad6a9a830a5
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   crypto:
     dependency: transitive
     description:
@@ -323,6 +331,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  flutter_sim_country_code:
+    dependency: transitive
+    description:
+      name: flutter_sim_country_code
+      sha256: fd6233ad01b811f5d2845c5b1c18120488417f2882a84df602daa65324e8371e
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.2"
   flutter_svg:
     dependency: transitive
     description:
@@ -621,6 +637,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "8.2.1"
+  phonenumbers:
+    dependency: "direct main"
+    description:
+      name: phonenumbers
+      sha256: "6a00ea6ca4636d8fba278a38e5fc6580be9e3cb38f4fafc4e6ef5009be0ffde2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
+  phonenumbers_core:
+    dependency: transitive
+    description:
+      name: phonenumbers_core
+      sha256: "9d4619947b8579b62f456bdb05d25be2e266c7601d1fbe02dc8e6bdc59dfb5d8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   pinput:
     dependency: "direct main"
     description:
@@ -669,6 +701,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.2"
+  quiver:
+    dependency: transitive
+    description:
+      name: quiver
+      sha256: b1c1ac5ce6688d77f65f3375a9abb9319b3cb32486bdc7a1e0fdf004d7ba4e47
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.1"
   realtime_client:
     dependency: transitive
     description:

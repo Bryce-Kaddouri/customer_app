@@ -2,7 +2,7 @@ import 'package:customer_app/src/feature/auth/presentation/widget/phone_field_wi
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:go_router/go_router.dart';
-import 'package:phone_form_field/phone_form_field.dart';
+import 'package:phonenumbers/phonenumbers.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/share_component/dismiss_keyboard.dart';
@@ -13,21 +13,19 @@ class SignInScreen extends StatelessWidget {
 
   // global key for the form
   final _formKey = GlobalKey<FormState>();
-  PhoneController phoneController = PhoneController();
   final FocusNode focusNode = FocusNode();
+
+  PhoneNumberEditingController phoneController = PhoneNumberEditingController.fromCountryCode('IE');
 
   @override
   Widget build(BuildContext context) {
     return material.Scaffold(
-      backgroundColor:
-          FluentTheme.of(context).navigationPaneTheme.backgroundColor,
+      backgroundColor: FluentTheme.of(context).navigationPaneTheme.backgroundColor,
       appBar: material.AppBar(
         elevation: 4,
         shadowColor: FluentTheme.of(context).shadowColor,
-        surfaceTintColor:
-            FluentTheme.of(context).navigationPaneTheme.backgroundColor,
-        backgroundColor:
-            FluentTheme.of(context).navigationPaneTheme.backgroundColor,
+        surfaceTintColor: FluentTheme.of(context).navigationPaneTheme.backgroundColor,
+        backgroundColor: FluentTheme.of(context).navigationPaneTheme.backgroundColor,
         centerTitle: true,
         title: Text('Sign In', style: FluentTheme.of(context).typography.title),
       ),
@@ -63,8 +61,9 @@ class SignInScreen extends StatelessWidget {
                       // Validate and save the form values
                       if (_formKey.currentState!.validate()) {
                         /*debugPrint(_formKey.currentState?.value.toString());*/
-                        String phone =
-                            '+${phoneController.value.countryCode}${phoneController.value.nsn}';
+                        String phone = phoneController.value!.formattedNumber;
+                        print(phone);
+
                         String phoneUri = Uri.encodeQueryComponent(phone);
 
                         context
@@ -81,8 +80,7 @@ class SignInScreen extends StatelessWidget {
                               builder: (context, close) {
                                 return InfoBar(
                                   title: const Text('Error!'),
-                                  content: const Text(
-                                      'Invalid email or password. Please try again.'),
+                                  content: const Text('Invalid email or password. Please try again.'),
                                   action: IconButton(
                                     icon: const Icon(FluentIcons.clear),
                                     onPressed: close,

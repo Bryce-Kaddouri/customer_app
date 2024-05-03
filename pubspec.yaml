@@ -52,6 +52,8 @@ dependencies:
   image: ^4.1.7
   add_2_calendar: ^3.0.1
   device_calendar: ^4.3.2
+  phonenumbers: ^1.1.1
+  country_calling_code_picker: ^2.0.1
 
 dev_dependencies:
   flutter_test:

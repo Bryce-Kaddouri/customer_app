@@ -444,7 +444,11 @@ class _MyAppState extends State<MyApp> {
       routerDelegate: router!.routerDelegate,
       routeInformationParser: router!.routeInformationParser,
       routeInformationProvider: router!.routeInformationProvider,
-      theme: fluent.FluentThemeData.light(),
+      theme: fluent.FluentThemeData.light().copyWith(
+        accentColor: fluent.Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        brightness: Brightness.dark,
+      ),
       darkTheme: fluent.FluentThemeData.dark(),
       themeMode: ThemeMode.dark,
       /* initialRoute: initialRoute,
