@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 class BottomNavBarWidget extends StatefulWidget {
   final int currentIndex;
+
   const BottomNavBarWidget({super.key, required this.currentIndex});
 
   @override
@@ -16,7 +17,9 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
     return fluent.Container(
       padding: const fluent.EdgeInsets.symmetric(horizontal: 16),
       decoration: fluent.BoxDecoration(
-        color: fluent.FluentTheme.of(context).navigationPaneTheme.overlayBackgroundColor,
+        color: fluent.FluentTheme.of(context)
+            .navigationPaneTheme
+            .overlayBackgroundColor,
         boxShadow: [
           fluent.BoxShadow(
             color: fluent.FluentTheme.of(context).shadowColor.withOpacity(0.2),
@@ -29,53 +32,85 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
       height: 70,
       width: double.infinity,
       child: Row(
-        mainAxisAlignment: fluent.MainAxisAlignment.spaceAround,
+        mainAxisAlignment: fluent.MainAxisAlignment.spaceEvenly,
         children: [
-          Container(
-            height: 50,
-            child: fluent.GestureDetector(
-              onTap: () {
-                context.go('/');
-              },
-              child: fluent.Column(
-                children: [
-                  fluent.Icon(fluent.FluentIcons.product_list, size: 20, color: widget.currentIndex == 0 ? Colors.red : fluent.FluentTheme.of(context).inactiveColor),
-                  fluent.Text(
-                    'Orders',
-                    style: fluent.TextStyle(color: widget.currentIndex == 0 ? Colors.red : fluent.FluentTheme.of(context).inactiveColor),
-                  ),
-                ],
+          fluent.Expanded(
+            child: Container(
+              width: double.infinity,
+              height: 50,
+              child: InkWell(
+                onTap: () {
+                  context.go('/');
+                },
+                child: fluent.Column(
+                  children: [
+                    fluent.Icon(fluent.FluentIcons.product_list,
+                        size: 20,
+                        color: widget.currentIndex == 0
+                            ? Colors.red
+                            : fluent.FluentTheme.of(context).inactiveColor),
+                    fluent.Text(
+                      'Orders',
+                      style: fluent.TextStyle(
+                          color: widget.currentIndex == 0
+                              ? Colors.red
+                              : fluent.FluentTheme.of(context).inactiveColor),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-          Container(
-            height: 50,
-            child: fluent.GestureDetector(
-              onTap: () {
-                context.go('/reminder');
-              },
-              child: fluent.Column(
-                children: [
-                  fluent.Icon(fluent.FluentIcons.schedule_event_action, size: 20, color: widget.currentIndex == 1 ? Colors.red : fluent.FluentTheme.of(context).inactiveColor),
-                  fluent.Text(
-                    'Reminders',
-                    style: fluent.TextStyle(color: widget.currentIndex == 1 ? Colors.red : fluent.FluentTheme.of(context).inactiveColor),
-                  ),
-                ],
+          fluent.Expanded(
+            child: Container(
+              width: double.infinity,
+              height: 50,
+              child: InkWell(
+                onTap: () {
+                  context.go('/reminder');
+                },
+                child: fluent.Column(
+                  children: [
+                    fluent.Icon(fluent.FluentIcons.schedule_event_action,
+                        size: 20,
+                        color: widget.currentIndex == 1
+                            ? Colors.red
+                            : fluent.FluentTheme.of(context).inactiveColor),
+                    fluent.Text(
+                      'Reminders',
+                      style: fluent.TextStyle(
+                          color: widget.currentIndex == 1
+                              ? Colors.red
+                              : fluent.FluentTheme.of(context).inactiveColor),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-          Container(
-            height: 50,
-            child: fluent.GestureDetector(
-              onTap: () {
-                context.go('/notifications');
-              },
-              child: fluent.Column(
-                children: [
-                  fluent.Icon(fluent.FluentIcons.ringer_active, size: 20, color: widget.currentIndex == 2 ? Colors.red : fluent.FluentTheme.of(context).inactiveColor),
-                  fluent.Text('Notifications', style: fluent.TextStyle(color: widget.currentIndex == 2 ? Colors.red : fluent.FluentTheme.of(context).inactiveColor)),
-                ],
+          fluent.Expanded(
+            child: Container(
+              width: double.infinity,
+              height: 50,
+              child: InkWell(
+                onTap: () {
+                  context.go('/notifications');
+                },
+                child: fluent.Column(
+                  children: [
+                    fluent.Icon(fluent.FluentIcons.ringer_active,
+                        size: 20,
+                        color: widget.currentIndex == 2
+                            ? Colors.red
+                            : fluent.FluentTheme.of(context).inactiveColor),
+                    fluent.Text('Notifications',
+                        style: fluent.TextStyle(
+                            color: widget.currentIndex == 2
+                                ? Colors.red
+                                : fluent.FluentTheme.of(context)
+                                    .inactiveColor)),
+                  ],
+                ),
               ),
             ),
           ),

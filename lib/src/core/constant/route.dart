@@ -4,7 +4,8 @@ import 'package:customer_app/src/feature/notification/data/model/notification_mo
 import 'package:customer_app/src/feature/notification/presentation/screen/notification_detail_screen.dart';
 import 'package:customer_app/src/feature/reminder/presentation/screen/reminder_screen.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart' hide IconButton, Button, ButtonStyle, Colors, ListTile, Card;
+import 'package:flutter/material.dart'
+    hide IconButton, Button, ButtonStyle, Colors, ListTile, Card;
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -62,7 +63,8 @@ class RouterHelper {
           return state.uri.path;
         }
       },
-      initialLocation: context.read<AuthProvider>().checkIsLoggedIn() ? '/' : '/signin',
+      initialLocation:
+          context.read<AuthProvider>().checkIsLoggedIn() ? '/' : '/signin',
       routes: [
         /*GoRoute(
           path: '/',
@@ -82,7 +84,8 @@ class RouterHelper {
               } else if (state.uri.path == '/reminder') {
                 currentIndex = 1;
               }
-              return BottomNavigationBarScaffold(child: child, currentIndex: currentIndex);
+              return BottomNavigationBarScaffold(
+                  child: child, currentIndex: currentIndex);
             },
             routes: [
               GoRoute(
@@ -102,14 +105,17 @@ class RouterHelper {
           path: '/orders/:date/:id',
           builder: (context, state) {
             print(state.pathParameters);
-            if (state.pathParameters.isEmpty || state.pathParameters['id'] == null || state.pathParameters['date'] == null) {
+            if (state.pathParameters.isEmpty ||
+                state.pathParameters['id'] == null ||
+                state.pathParameters['date'] == null) {
               return ScaffoldPage(
                   content: Center(
                 child: Text('Loading...'),
               ));
             } else {
               int orderId = int.parse(state.pathParameters['id']!);
-              DateTime orderDate = DateTime.parse(state.pathParameters['date']!);
+              DateTime orderDate =
+                  DateTime.parse(state.pathParameters['date']!);
               return OrderDetailScreen(orderId: orderId, orderDate: orderDate);
             }
           },
@@ -168,24 +174,31 @@ class RouterHelper {
 class BottomNavigationBarScaffold extends StatefulWidget {
   final Widget child;
   final int currentIndex;
-  const BottomNavigationBarScaffold({super.key, required this.child, required this.currentIndex});
+
+  const BottomNavigationBarScaffold(
+      {super.key, required this.child, required this.currentIndex});
 
   @override
-  State<BottomNavigationBarScaffold> createState() => _BottomNavigationBarScaffoldState();
+  State<BottomNavigationBarScaffold> createState() =>
+      _BottomNavigationBarScaffoldState();
 }
 
-class _BottomNavigationBarScaffoldState extends State<BottomNavigationBarScaffold> {
+class _BottomNavigationBarScaffoldState
+    extends State<BottomNavigationBarScaffold> {
   FlyoutController flyController = FlyoutController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: FluentTheme.of(context).navigationPaneTheme.backgroundColor,
+      backgroundColor:
+          FluentTheme.of(context).navigationPaneTheme.backgroundColor,
       appBar: AppBar(
         elevation: 2,
         shadowColor: FluentTheme.of(context).shadowColor,
-        surfaceTintColor: FluentTheme.of(context).navigationPaneTheme.overlayBackgroundColor,
-        backgroundColor: FluentTheme.of(context).navigationPaneTheme.overlayBackgroundColor,
+        surfaceTintColor:
+            FluentTheme.of(context).navigationPaneTheme.overlayBackgroundColor,
+        backgroundColor:
+            FluentTheme.of(context).navigationPaneTheme.overlayBackgroundColor,
         centerTitle: true,
         title: Text(
           widget.currentIndex == 0
@@ -211,10 +224,14 @@ class _BottomNavigationBarScaffoldState extends State<BottomNavigationBarScaffol
                       width: 40,
                       child: Button(
                         style: ButtonStyle(
-                          backgroundColor: ButtonState.all(FluentTheme.of(context).navigationPaneTheme.backgroundColor),
+                          backgroundColor: ButtonState.all(
+                              FluentTheme.of(context)
+                                  .navigationPaneTheme
+                                  .backgroundColor),
                           elevation: ButtonState.all(4),
                           padding: ButtonState.all(EdgeInsets.all(0)),
-                          shape: ButtonState.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                          shape: ButtonState.all(RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20))),
                         ),
                         child: const Icon(FluentIcons.contact, size: 24),
                         onPressed: () {
@@ -236,33 +253,47 @@ class _BottomNavigationBarScaffoldState extends State<BottomNavigationBarScaffol
                                   padding: const EdgeInsets.all(12.0),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Card(
                                         padding: const EdgeInsets.all(0),
                                         child: ListTile(
-                                          leading: const Icon(FluentIcons.contact),
+                                          leading:
+                                              const Icon(FluentIcons.contact),
                                           title: const Text(
                                             'Profile',
-                                            style: TextStyle(fontWeight: FontWeight.bold),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                       ),
                                       const SizedBox(height: 12.0),
                                       Card(
                                         padding: const EdgeInsets.all(0),
-                                        backgroundColor: AppColor.canceledBackgroundColor,
+                                        backgroundColor:
+                                            AppColor.canceledBackgroundColor,
                                         child: ListTile(
                                           onPressed: () {
-                                            context.read<AuthProvider>().logout().then((value) {
+                                            context
+                                                .read<AuthProvider>()
+                                                .logout()
+                                                .then((value) {
                                               context.go('/signin');
                                             });
                                           },
-                                          tileColor: ButtonState.all(Colors.transparent),
-                                          leading: const Icon(FluentIcons.sign_out, color: AppColor.canceledForegroundColor),
+                                          tileColor: ButtonState.all(
+                                              Colors.transparent),
+                                          leading: const Icon(
+                                              FluentIcons.sign_out,
+                                              color: AppColor
+                                                  .canceledForegroundColor),
                                           title: const Text(
                                             'Sign out',
-                                            style: TextStyle(fontWeight: FontWeight.bold, color: AppColor.canceledForegroundColor),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColor
+                                                    .canceledForegroundColor),
                                           ),
                                         ),
                                       ),
@@ -293,7 +324,9 @@ class _BottomNavigationBarScaffoldState extends State<BottomNavigationBarScaffol
               : widget.currentIndex == 1
                   ? Button(
                       style: ButtonStyle(
-                        backgroundColor: ButtonState.all(FluentTheme.of(context).navigationPaneTheme.backgroundColor),
+                        backgroundColor: ButtonState.all(FluentTheme.of(context)
+                            .navigationPaneTheme
+                            .backgroundColor),
                         padding: ButtonState.all(EdgeInsets.all(0)),
                       ),
                       child: Container(
@@ -312,7 +345,7 @@ class _BottomNavigationBarScaffoldState extends State<BottomNavigationBarScaffol
           SizedBox(width: 10),
         ],
       ),
-      body: widget.child,
+      body: SafeArea(child: widget.child),
       bottomNavigationBar: BottomNavBarWidget(
         currentIndex: widget.currentIndex,
       ),
