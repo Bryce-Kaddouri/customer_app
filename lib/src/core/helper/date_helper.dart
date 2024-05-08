@@ -7,6 +7,10 @@ class DateHelper {
     return DateFormat('yyyy-MM-dd').format(date);
   }
 
+  static String getFormattedDateWithTime(DateTime date) {
+    return DateFormat('yyyy-MM-dd HH:mm').format(date);
+  }
+
   static String get24HourTime(TimeOfDay time) {
     DateTime date = DateTime(2023, 1, 1, time.hour, time.minute);
     return DateFormat('HH:mm').format(date);
